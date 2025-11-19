@@ -115,21 +115,24 @@ export const VideoCanvas = ({
     let verticalOff = faceLength * 0.3;
     const widthFactor = Math.min(jawWidth / w, 0.3);
     verticalOff += widthFactor * faceLength * 0.8;
+    
+    // Apply user's vertical offset adjustment
+    verticalOff += verticalOffset * faceLength;
 
     const neckX = jawMidX;
     const neckY = chin.y + verticalOff;
 
     const targetW = jawWidth * (1.4 + (jawWidth / w) * 0.8);
-    let scale = targetW / chainImageRef.current.width;
-    scale *= chainScale;
+    const targetH = chainImageRef.current.height * (targetW / chainImageRef.current.width);
+    
+    // Apply user's scale adjustment
+    const chainW = targetW * chainScale;
+    const chainH = targetH * chainScale;
 
     const angle = Math.atan2(jawR.y - jawL.y, jawR.x - jawL.x);
 
-    const chainW = chainImageRef.current.width * scale;
-    const chainH = chainImageRef.current.height * scale;
-
     ctx.save();
-    ctx.translate(neckX, neckY + (faceLength * 0.15) - (chainH * verticalOffset));
+    ctx.translate(neckX, neckY + (faceLength * 0.15));
     ctx.rotate(angle);
     ctx.drawImage(chainImageRef.current, -chainW / 2, 0, chainW, chainH);
     ctx.restore();
