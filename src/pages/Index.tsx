@@ -4,6 +4,7 @@ import { ControlPanel } from '@/components/ControlPanel';
 import { StatusBar } from '@/components/StatusBar';
 import { QuickActions } from '@/components/QuickActions';
 import { toast } from 'sonner';
+import { API_ENDPOINTS } from '@/config/api';
 
 interface Chain {
   name: string;
@@ -22,7 +23,7 @@ const Index = () => {
   useEffect(() => {
     const fetchChains = async () => {
       try {
-        const response = await fetch('/api/chains');
+        const response = await fetch(API_ENDPOINTS.chains);
         const data = await response.json();
         
         if (data && data.length > 0) {
