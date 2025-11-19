@@ -78,9 +78,9 @@ export const ControlPanel = ({
 
           {/* Vertical Position */}
           <div className="space-y-2">
-            <div className="flex justify-between text-xs md:text-sm">
-              <span className="text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.9)]">Vertical Position</span>
+            <div className="flex items-center gap-2 text-xs md:text-sm">
               <span className="text-gold font-semibold drop-shadow-[0_0_10px_rgba(212,175,55,1)]">{verticalOffset.toFixed(2)}</span>
+              <span className="text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.9)]">Vertical Position</span>
             </div>
             <input
               type="range"
