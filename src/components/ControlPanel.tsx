@@ -70,7 +70,7 @@ export const ControlPanel = ({
       {/* Control Panel */}
       <div
         className={cn(
-          'fixed md:static bottom-0 left-0 right-0 bg-black border-t border-gold/20 md:border-r md:border-t-0 md:w-[350px] max-h-[35vh] md:max-h-screen overflow-y-auto transition-transform duration-300 z-40',
+          'fixed md:static bottom-0 left-0 right-0 bg-gold/5 border-t border-gold/20 md:border-r md:border-t-0 md:w-[350px] max-h-[35vh] md:max-h-screen overflow-y-auto transition-transform duration-300 z-40',
           isCollapsed && 'translate-y-full md:translate-y-0'
         )}
       >
