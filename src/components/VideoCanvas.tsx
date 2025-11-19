@@ -49,7 +49,8 @@ export const VideoCanvas = ({
       
       // Load MediaPipe Face Mesh
       const { FaceMesh } = await import('@mediapipe/face_mesh');
-      const { Camera } = await import('@mediapipe/camera_utils');
+      const cameraUtils = await import('@mediapipe/camera_utils');
+      const Camera = cameraUtils.Camera;
 
       const faceMesh = new FaceMesh({
         locateFile: (file) => {
