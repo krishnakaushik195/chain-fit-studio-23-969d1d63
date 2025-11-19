@@ -47,17 +47,42 @@ export const VideoCanvas = ({
     try {
       setError(null);
 
-      // Load MediaPipe Face Mesh & Camera via dynamic import (robust to different export styles)
-      const faceMeshModule: any = await import('@mediapipe/face_mesh');
-      const cameraModule: any = await import('@mediapipe/camera_utils');
+      // --- Load MediaPipe scripts from CDN and use global constructors ---
+      const loadScript = (src: string) =>
+        new Promise<void>((resolve, reject) => {
+          // Avoid adding the same script multiple times
+          if (document.querySelector(`script[src="${src}"]`)) {
+            resolve();
+            return;
+          }
 
-      console.log('FaceMesh module import:', faceMeshModule);
-      console.log('Camera module import:', cameraModule);
+          const script = document.createElement('script');
+          script.src = src;
+          script.async = true;
+          script.onload = () => resolve();
+          script.onerror = () => reject(new Error(`Failed to load ${src}`));
+          document.body.appendChild(script);
+        });
 
-      const FaceMeshCtor =
-        faceMeshModule.FaceMesh || faceMeshModule.default || faceMeshModule;
-      const CameraCtor =
-        cameraModule.Camera || cameraModule.default || cameraModule;
+      // Load FaceMesh and Camera utilities from jsDelivr (browser build)
+      await loadScript(
+        'https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js'
+      );
+      await loadScript(
+        'https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js'
+      );
+
+      const FaceMeshCtor = (window as any).FaceMesh;
+      const CameraCtor = (window as any).Camera;
+
+      console.log('Global FaceMeshCtor:', FaceMeshCtor);
+      console.log('Global CameraCtor:', CameraCtor);
+
+      if (typeof FaceMeshCtor !== 'function' || typeof CameraCtor !== 'function') {
+        throw new Error(
+          'MediaPipe globals not found. Check CDN URLs or network connectivity.'
+        );
+      }
 
       const faceMesh = new FaceMeshCtor({
         locateFile: (file: string) => {
@@ -95,7 +120,7 @@ export const VideoCanvas = ({
     } catch (err) {
       console.error('Camera error in startCamera:', err);
       setError(
-        'Camera access failed. Please check permissions, refresh the page, and try again.'
+        'Camera access failed or MediaPipe could not load. Please check camera permissions and internet connection, then refresh and try again.'
       );
     }
   };
