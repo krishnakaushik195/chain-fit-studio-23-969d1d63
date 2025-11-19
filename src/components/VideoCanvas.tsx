@@ -115,12 +115,12 @@ export const VideoCanvas = ({
     let verticalOff = faceLength * 0.3;
     const widthFactor = Math.min(jawWidth / w, 0.3);
     verticalOff += widthFactor * faceLength * 0.8;
-    
-    // Apply user's vertical offset adjustment
-    verticalOff += verticalOffset * faceLength;
+
+    // Stronger user-controlled vertical adjustment (up/down on chest)
+    const userOffsetPx = verticalOffset * faceLength * 3;
 
     const neckX = jawMidX;
-    const neckY = chin.y + verticalOff;
+    const neckY = chin.y + verticalOff + userOffsetPx;
 
     const targetW = jawWidth * (1.4 + (jawWidth / w) * 0.8);
     const targetH = chainImageRef.current.height * (targetW / chainImageRef.current.width);

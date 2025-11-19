@@ -100,13 +100,13 @@ export const ControlPanel = ({
           <div className="space-y-2">
             <div className="flex justify-between text-xs md:text-sm text-muted-foreground">
               <span>Chain Size</span>
-              <span className="text-primary font-semibold">{chainScale.toFixed(1)}x</span>
+              <span className="text-primary font-semibold">{Math.round(chainScale * 100)}%</span>
             </div>
             <input
               type="range"
-              min="0.5"
-              max="2.0"
-              step="0.1"
+              min="0.4"
+              max="2.5"
+              step="0.05"
               value={chainScale}
               onChange={(e) => onChainScaleChange(parseFloat(e.target.value))}
               className="w-full h-2 bg-white/10 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:gradient-neon [&::-webkit-slider-thumb]:shadow-lg [&::-webkit-slider-thumb]:shadow-primary/50"
