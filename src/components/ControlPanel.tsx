@@ -35,31 +35,29 @@ export const ControlPanel = ({
   return (
     <div
       className={cn(
-        'fixed left-1/2 -translate-x-1/2 md:static md:translate-x-0 md:left-auto border-2 border-gold md:border-r md:w-[350px] max-h-[35vh] md:max-h-screen overflow-y-auto transition-all duration-500 ease-out z-50 rounded-2xl md:rounded-none',
-        isCollapsed 
-          ? 'bottom-8 bg-black scale-90 w-auto' 
-          : 'bottom-4 glass-panel scale-100 w-[calc(100%-2rem)] max-w-[500px] md:max-w-none md:bottom-0'
+        'fixed md:static bottom-0 left-0 right-0 bg-black border-t border-gold/20 md:border-r md:border-t-0 md:w-[350px] max-h-[35vh] md:max-h-screen overflow-y-auto transition-transform duration-300 z-50',
+        isCollapsed && 'translate-y-[calc(100%-56px)] md:translate-y-0'
       )}
     >
       {/* Mobile Header */}
       <div
         className={cn(
-          'md:hidden cursor-pointer transition-all duration-300',
-          isCollapsed ? 'mx-auto my-3 w-fit' : 'w-full'
+          'md:hidden cursor-pointer',
+          isCollapsed ? 'mx-auto my-4 w-fit' : 'w-full'
         )}
         onClick={() => setIsCollapsed(!isCollapsed)}
       >
         <div
           className={cn(
-            'flex items-center gap-2 transition-all duration-300',
+            'flex items-center gap-2 transition-all',
             isCollapsed
-              ? 'bg-gold text-black px-8 py-3 rounded-full shadow-[0_0_20px_rgba(212,175,55,0.6)]'
+              ? 'bg-gold text-black px-6 py-2 rounded-lg shadow-lg shadow-gold/60'
               : 'bg-transparent text-white p-4 border-b border-gold/20 justify-between'
           )}
         >
           <div
             className={cn(
-              'text-sm font-semibold tracking-wide',
+              'text-base font-semibold',
               !isCollapsed && 'drop-shadow-[0_0_8px_rgba(255,255,255,0.9)]'
             )}
           >
