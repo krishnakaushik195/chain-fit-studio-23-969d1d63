@@ -25,9 +25,9 @@ const Index = () => {
         const response = await fetch('/api/chains');
         const data = await response.json();
         
-        if (data.chains && data.chains.length > 0) {
-          setChains(data.chains);
-          toast.success(`Loaded ${data.chains.length} chains`);
+        if (data && data.length > 0) {
+          setChains(data);
+          toast.success(`Loaded ${data.length} chains`);
         } else {
           toast.error('No chains found');
         }
