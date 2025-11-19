@@ -62,6 +62,32 @@ const Index = () => {
     setCurrentIndex((prev) => (prev + 1) % chains.length);
   }, [chains.length]);
 
+  const handleScreenshot = useCallback(() => {
+    const video = document.querySelector('video');
+    const canvas = document.createElement('canvas');
+    
+    if (video) {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const ctx = canvas.getContext('2d');
+      
+      if (ctx) {
+        ctx.drawImage(video, 0, 0);
+        canvas.toBlob((blob) => {
+          if (blob) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `chain-fit-${Date.now()}.png`;
+            a.click();
+            URL.revokeObjectURL(url);
+            toast.success('Screenshot saved!');
+          }
+        });
+      }
+    }
+  }, []);
+
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -95,17 +121,18 @@ const Index = () => {
     <div className="flex flex-col md:flex-row h-screen w-screen overflow-hidden">
       <StatusBar status={statusText} isActive={isCameraReady} />
       
-      <ControlPanel
-        chains={chains}
-        currentIndex={currentIndex}
-        onSelectChain={selectChain}
-        chainScale={chainScale}
-        onChainScaleChange={setChainScale}
-        verticalOffset={verticalOffset}
-        onVerticalOffsetChange={setVerticalOffset}
-        onPrevious={previousChain}
-        onNext={nextChain}
-      />
+        <ControlPanel
+          chains={chains}
+          currentIndex={currentIndex}
+          onSelectChain={selectChain}
+          chainScale={chainScale}
+          onChainScaleChange={setChainScale}
+          verticalOffset={verticalOffset}
+          onVerticalOffsetChange={setVerticalOffset}
+          onPrevious={previousChain}
+          onNext={nextChain}
+          onScreenshot={handleScreenshot}
+        />
       
       <VideoCanvas
         currentChain={currentChain}
