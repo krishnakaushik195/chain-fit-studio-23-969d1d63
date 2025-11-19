@@ -39,7 +39,7 @@ export const ControlPanel = ({
       {/* Floating Action Buttons - Mobile Only */}
       <div className={cn(
         "fixed left-1/2 -translate-x-1/2 flex items-center gap-3 z-50 md:hidden transition-all duration-300",
-        isCollapsed ? "bottom-4" : "top-4"
+        isCollapsed ? "bottom-4" : "bottom-[37vh]"
       )}>
         <button
           onClick={onScreenshot}
