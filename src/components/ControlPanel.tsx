@@ -42,23 +42,25 @@ export const ControlPanel = ({
       {/* Mobile Header */}
       <div
         className={cn(
-          "md:hidden cursor-pointer",
-          isCollapsed 
-            ? "mx-auto my-4 w-fit" 
-            : "w-full"
+          'md:hidden cursor-pointer',
+          isCollapsed ? 'mx-auto my-4 w-fit' : 'w-full'
         )}
         onClick={() => setIsCollapsed(!isCollapsed)}
       >
-        <div className={cn(
-          "flex items-center gap-2 transition-all",
-          isCollapsed 
-            ? "bg-gold text-black px-6 py-2 rounded-lg" 
-            : "bg-transparent text-white p-4 border-b border-gold/20 justify-between"
-        )}>
-          <div className={cn(
-            "text-base font-semibold",
-            !isCollapsed && "drop-shadow-[0_0_8px_rgba(255,255,255,0.9)]"
-          )}>
+        <div
+          className={cn(
+            'flex items-center gap-2 transition-all',
+            isCollapsed
+              ? 'bg-gold text-black px-6 py-2 rounded-lg shadow-lg shadow-gold/60'
+              : 'bg-transparent text-white p-4 border-b border-gold/20 justify-between'
+          )}
+        >
+          <div
+            className={cn(
+              'text-base font-semibold',
+              !isCollapsed && 'drop-shadow-[0_0_8px_rgba(255,255,255,0.9)]'
+            )}
+          >
             Controls
           </div>
           {!isCollapsed && (
@@ -71,13 +73,19 @@ export const ControlPanel = ({
       <div className="p-5 md:p-8 space-y-6">
         {/* Adjustments */}
         <div className="space-y-4">
-          <h3 className="text-sm md:text-base font-semibold text-gold drop-shadow-[0_0_10px_rgba(212,175,55,1)]">Adjustments</h3>
+          <h3 className="text-sm md:text-base font-semibold text-gold drop-shadow-[0_0_10px_rgba(212,175,55,1)]">
+            Adjustments
+          </h3>
 
           {/* Chain Size */}
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-xs md:text-sm">
-              <span className="text-gold font-semibold drop-shadow-[0_0_10px_rgba(212,175,55,1)]">{Math.round(chainScale * 100)}%</span>
-              <span className="text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.9)]">Chain Size</span>
+              <span className="text-gold font-semibold drop-shadow-[0_0_10px_rgba(212,175,55,1)]">
+                {Math.round(chainScale * 100)}%
+              </span>
+              <span className="text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.9)]">
+                Chain Size
+              </span>
             </div>
             <input
               type="range"
@@ -93,8 +101,12 @@ export const ControlPanel = ({
           {/* Vertical Position */}
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-xs md:text-sm">
-              <span className="text-gold font-semibold drop-shadow-[0_0_10px_rgba(212,175,55,1)]">{verticalOffset.toFixed(2)}</span>
-              <span className="text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.9)]">Vertical Position</span>
+              <span className="text-gold font-semibold drop-shadow-[0_0_10px_rgba(212,175,55,1)]">
+                {verticalOffset.toFixed(2)}
+              </span>
+              <span className="text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.9)]">
+                Vertical Position
+              </span>
             </div>
             <input
               type="range"
@@ -110,8 +122,10 @@ export const ControlPanel = ({
 
         {/* Chain Selection */}
         <div className="space-y-4">
-          <h3 className="text-sm md:text-base font-semibold text-gold drop-shadow-[0_0_10px_rgba(212,175,55,1)]">Select Chain</h3>
-          
+          <h3 className="text-sm md:text-base font-semibold text-gold drop-shadow-[0_0_10px_rgba(212,175,55,1)]">
+            Select Chain
+          </h3>
+
           <div className="grid grid-cols-2 md:grid-cols-1 gap-2 md:max-h-[250px] md:overflow-y-auto">
             {chains.map((chain, idx) => (
               <button
@@ -134,13 +148,13 @@ export const ControlPanel = ({
               onClick={onPrevious}
               className="px-4 py-3 bg-transparent hover:bg-gold/20 border-2 border-gold/60 hover:border-gold rounded-lg text-sm font-medium transition-all text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.9)]"
             >
-              ← Previous
+              2 Previous
             </button>
             <button
               onClick={onNext}
               className="px-4 py-3 bg-transparent hover:bg-gold/20 border-2 border-gold/60 hover:border-gold rounded-lg text-sm font-medium transition-all text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.9)]"
             >
-              Next →
+              Next 8
             </button>
           </div>
         </div>
