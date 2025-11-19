@@ -15,7 +15,7 @@ const Index = () => {
   const [chains, setChains] = useState<Chain[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [chainScale, setChainScale] = useState(1.0);
-  const [verticalOffset, setVerticalOffset] = useState(0.20);
+  const [verticalOffset, setVerticalOffset] = useState(-0.20);
   const [isLoading, setIsLoading] = useState(true);
   const [isCameraReady, setIsCameraReady] = useState(false);
 
