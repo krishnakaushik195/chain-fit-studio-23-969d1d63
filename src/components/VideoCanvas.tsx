@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
+import { FaceMesh } from '@mediapipe/face_mesh';
+import { Camera } from '@mediapipe/camera_utils';
 
 interface Chain {
   name: string;
@@ -48,9 +50,6 @@ export const VideoCanvas = ({
       setError(null);
       
       // Load MediaPipe Face Mesh
-      const { FaceMesh } = await import('@mediapipe/face_mesh');
-      const cameraUtils = await import('@mediapipe/camera_utils');
-      const Camera = cameraUtils.Camera;
 
       const faceMesh = new FaceMesh({
         locateFile: (file) => {
