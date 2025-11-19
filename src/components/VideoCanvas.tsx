@@ -212,7 +212,7 @@ export const VideoCanvas = ({
       {!isStarted && (
         <button
           onClick={startCamera}
-          className="absolute z-10 px-10 py-5 text-lg font-bold rounded-xl gradient-neon text-black shadow-lg shadow-primary/40 hover:shadow-primary/60 transition-all hover:scale-105 active:scale-95"
+          className="absolute z-10 px-10 py-5 text-lg font-bold rounded-xl bg-black/20 backdrop-blur-md border-2 border-gold text-white shadow-lg shadow-gold/50 hover:shadow-gold/70 hover:bg-gold/10 transition-all hover:scale-105 active:scale-95"
         >
           🎥 Start Camera
         </button>
