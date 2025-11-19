@@ -35,19 +35,19 @@ export const ControlPanel = ({
   return (
     <div
       className={cn(
-        'fixed md:static bottom-0 left-0 right-0 glass-panel border-t md:border-r md:border-t-0 md:w-[350px] max-h-[50vh] md:max-h-screen overflow-y-auto transition-transform duration-300 z-50',
+        'fixed md:static bottom-0 left-0 right-0 glass-panel border-t border-gold/20 md:border-r md:border-t-0 md:w-[350px] max-h-[50vh] md:max-h-screen overflow-y-auto transition-transform duration-300 z-50',
         isCollapsed && 'translate-y-[calc(100%-60px)] md:translate-y-0'
       )}
     >
       {/* Mobile Header */}
       <div
-        className="md:hidden flex justify-between items-center p-4 bg-zinc-900/80 cursor-pointer border-b border-white/5"
+        className="md:hidden flex justify-between items-center p-4 bg-black/20 backdrop-blur-sm cursor-pointer border-b border-gold/20"
         onClick={() => setIsCollapsed(!isCollapsed)}
       >
-        <div className="neon-text text-base font-semibold">⚙️ Controls</div>
+        <div className="gold-text text-base font-semibold">⚙️ Controls</div>
         <ChevronDown
           className={cn(
-            'w-6 h-6 transition-transform text-primary',
+            'w-6 h-6 transition-transform text-gold',
             !isCollapsed && 'rotate-180'
           )}
         />
@@ -57,7 +57,7 @@ export const ControlPanel = ({
       <div className="p-5 md:p-8 space-y-6">
         {/* Chain Selection */}
         <div className="space-y-4">
-          <h3 className="text-sm md:text-base font-semibold text-primary">🔗 Select Chain</h3>
+          <h3 className="text-sm md:text-base font-semibold text-gold">🔗 Select Chain</h3>
           
           <div className="grid grid-cols-2 md:grid-cols-1 gap-2 md:max-h-[250px] md:overflow-y-auto">
             {chains.map((chain, idx) => (
@@ -67,8 +67,8 @@ export const ControlPanel = ({
                 className={cn(
                   'p-4 rounded-lg text-sm text-center transition-all border-2',
                   idx === currentIndex
-                    ? 'bg-primary/20 border-primary shadow-lg shadow-primary/20'
-                    : 'bg-white/5 border-transparent hover:bg-white/10'
+                    ? 'bg-gold/20 border-gold shadow-lg shadow-gold/30'
+                    : 'bg-white/5 border-transparent hover:bg-gold/10'
                 )}
               >
                 {chain.name}
@@ -79,13 +79,13 @@ export const ControlPanel = ({
           <div className="grid grid-cols-2 gap-2">
             <button
               onClick={onPrevious}
-              className="px-4 py-3 bg-white/5 hover:bg-primary/20 border border-white/10 hover:border-primary/50 rounded-lg text-sm font-medium transition-all"
+              className="px-4 py-3 bg-black/20 hover:bg-gold/20 border border-gold/30 hover:border-gold/60 rounded-lg text-sm font-medium transition-all"
             >
               ← Previous
             </button>
             <button
               onClick={onNext}
-              className="px-4 py-3 bg-white/5 hover:bg-primary/20 border border-white/10 hover:border-primary/50 rounded-lg text-sm font-medium transition-all"
+              className="px-4 py-3 bg-black/20 hover:bg-gold/20 border border-gold/30 hover:border-gold/60 rounded-lg text-sm font-medium transition-all"
             >
               Next →
             </button>
@@ -94,13 +94,13 @@ export const ControlPanel = ({
 
         {/* Adjustments */}
         <div className="space-y-4">
-          <h3 className="text-sm md:text-base font-semibold text-primary">⚙️ Adjustments</h3>
+          <h3 className="text-sm md:text-base font-semibold text-gold">⚙️ Adjustments</h3>
 
           {/* Chain Size */}
           <div className="space-y-2">
             <div className="flex justify-between text-xs md:text-sm text-muted-foreground">
               <span>Chain Size</span>
-              <span className="text-primary font-semibold">{Math.round(chainScale * 100)}%</span>
+              <span className="text-gold font-semibold">{Math.round(chainScale * 100)}%</span>
             </div>
             <input
               type="range"
@@ -117,7 +117,7 @@ export const ControlPanel = ({
           <div className="space-y-2">
             <div className="flex justify-between text-xs md:text-sm text-muted-foreground">
               <span>Vertical Position</span>
-              <span className="text-primary font-semibold">{verticalOffset.toFixed(2)}</span>
+              <span className="text-gold font-semibold">{verticalOffset.toFixed(2)}</span>
             </div>
             <input
               type="range"

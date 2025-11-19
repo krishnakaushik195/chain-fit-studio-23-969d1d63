@@ -17,16 +17,16 @@ All colors MUST be HSL.
     --popover: 0 0% 8%;
     --popover-foreground: 0 0% 100%;
 
-    --primary: 158 100% 50%;
+    --primary: 45 100% 60%;
     --primary-foreground: 0 0% 0%;
 
-    --secondary: 195 100% 50%;
+    --secondary: 45 90% 50%;
     --secondary-foreground: 0 0% 0%;
 
     --muted: 0 0% 15%;
-    --muted-foreground: 0 0% 70%;
+    --muted-foreground: 0 0% 60%;
 
-    --accent: 158 100% 50%;
+    --accent: 45 100% 65%;
     --accent-foreground: 0 0% 0%;
 
     --destructive: 0 84% 60%;
@@ -34,23 +34,23 @@ All colors MUST be HSL.
 
     --border: 0 0% 20%;
     --input: 0 0% 20%;
-    --ring: 158 100% 50%;
+    --ring: 45 100% 60%;
 
     --radius: 0.75rem;
 
-    --neon-green: 158 100% 50%;
-    --neon-cyan: 195 100% 50%;
-    --glass-bg: 0 0% 10%;
-    --glass-border: 0 0% 25%;
+    --gold: 45 100% 60%;
+    --gold-dark: 45 90% 45%;
+    --glass-bg: 0 0% 5%;
+    --glass-border: 45 100% 60%;
 
     --sidebar-background: 0 0% 6%;
     --sidebar-foreground: 0 0% 90%;
-    --sidebar-primary: 158 100% 50%;
+    --sidebar-primary: 45 100% 60%;
     --sidebar-primary-foreground: 0 0% 0%;
     --sidebar-accent: 0 0% 12%;
     --sidebar-accent-foreground: 0 0% 90%;
     --sidebar-border: 0 0% 15%;
-    --sidebar-ring: 158 100% 50%;
+    --sidebar-ring: 45 100% 60%;
   }
 
   .dark {
@@ -60,27 +60,27 @@ All colors MUST be HSL.
     --card-foreground: 0 0% 100%;
     --popover: 0 0% 8%;
     --popover-foreground: 0 0% 100%;
-    --primary: 158 100% 50%;
+    --primary: 45 100% 60%;
     --primary-foreground: 0 0% 0%;
-    --secondary: 195 100% 50%;
+    --secondary: 45 90% 50%;
     --secondary-foreground: 0 0% 0%;
     --muted: 0 0% 15%;
-    --muted-foreground: 0 0% 70%;
-    --accent: 158 100% 50%;
+    --muted-foreground: 0 0% 60%;
+    --accent: 45 100% 65%;
     --accent-foreground: 0 0% 0%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
     --border: 0 0% 20%;
     --input: 0 0% 20%;
-    --ring: 158 100% 50%;
+    --ring: 45 100% 60%;
     --sidebar-background: 0 0% 6%;
     --sidebar-foreground: 0 0% 90%;
-    --sidebar-primary: 158 100% 50%;
+    --sidebar-primary: 45 100% 60%;
     --sidebar-primary-foreground: 0 0% 0%;
     --sidebar-accent: 0 0% 12%;
     --sidebar-accent-foreground: 0 0% 90%;
     --sidebar-border: 0 0% 15%;
-    --sidebar-ring: 158 100% 50%;
+    --sidebar-ring: 45 100% 60%;
   }
 }
 
@@ -93,18 +93,18 @@ All colors MUST be HSL.
     @apply bg-gradient-to-br from-black to-zinc-900 text-foreground;
   }
 
-  .gradient-neon {
-    background: linear-gradient(135deg, hsl(var(--neon-green)) 0%, hsl(var(--neon-cyan)) 100%);
+  .gradient-gold {
+    background: linear-gradient(135deg, hsl(var(--gold)) 0%, hsl(var(--gold-dark)) 100%);
   }
 
   .glass-panel {
-    background: rgba(10, 10, 10, 0.8);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(212, 175, 55, 0.15);
   }
 
-  .neon-text {
-    background: linear-gradient(135deg, hsl(var(--neon-green)) 0%, hsl(var(--neon-cyan)) 100%);
+  .gold-text {
+    background: linear-gradient(135deg, hsl(var(--gold)) 0%, hsl(var(--gold-dark)) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
