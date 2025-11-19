@@ -98,9 +98,9 @@ All colors MUST be HSL.
   }
 
   .glass-panel {
-    background: rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(212, 175, 55, 0.15);
+    background: rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(212, 175, 55, 0.25);
   }
 
   .gold-text {

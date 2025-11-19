@@ -41,13 +41,13 @@ export const ControlPanel = ({
     >
       {/* Mobile Header */}
       <div
-        className="md:hidden flex justify-between items-center p-4 bg-black/20 backdrop-blur-sm cursor-pointer border-b border-gold/20"
+        className="md:hidden flex justify-between items-center p-4 bg-black/10 backdrop-blur-md cursor-pointer border-b border-gold/25"
         onClick={() => setIsCollapsed(!isCollapsed)}
       >
-        <div className="gold-text text-base font-semibold">⚙️ Controls</div>
+        <div className="gold-text text-base font-semibold drop-shadow-lg">⚙️ Controls</div>
         <ChevronDown
           className={cn(
-            'w-6 h-6 transition-transform text-gold',
+            'w-6 h-6 transition-transform text-gold drop-shadow-lg',
             !isCollapsed && 'rotate-180'
           )}
         />
@@ -57,7 +57,7 @@ export const ControlPanel = ({
       <div className="p-5 md:p-8 space-y-6">
         {/* Chain Selection */}
         <div className="space-y-4">
-          <h3 className="text-sm md:text-base font-semibold text-gold">🔗 Select Chain</h3>
+          <h3 className="text-sm md:text-base font-semibold text-gold drop-shadow-lg">🔗 Select Chain</h3>
           
           <div className="grid grid-cols-2 md:grid-cols-1 gap-2 md:max-h-[250px] md:overflow-y-auto">
             {chains.map((chain, idx) => (
@@ -65,10 +65,10 @@ export const ControlPanel = ({
                 key={idx}
                 onClick={() => onSelectChain(idx)}
                 className={cn(
-                  'p-4 rounded-lg text-sm text-center transition-all border-2 text-white',
+                  'p-4 rounded-lg text-sm text-center transition-all border-2 text-white drop-shadow-lg',
                   idx === currentIndex
-                    ? 'bg-gold/20 border-gold shadow-lg shadow-gold/30'
-                    : 'bg-white/5 border-transparent hover:bg-gold/10'
+                    ? 'bg-gold/25 border-gold shadow-lg shadow-gold/30'
+                    : 'bg-black/20 border-gold/30 hover:bg-gold/15'
                 )}
               >
                 {chain.name}
@@ -79,13 +79,13 @@ export const ControlPanel = ({
           <div className="grid grid-cols-2 gap-2">
             <button
               onClick={onPrevious}
-              className="px-4 py-3 bg-black/20 hover:bg-gold/20 border border-gold/30 hover:border-gold/60 rounded-lg text-sm font-medium transition-all text-white"
+              className="px-4 py-3 bg-black/15 hover:bg-gold/20 border border-gold/40 hover:border-gold/70 rounded-lg text-sm font-medium transition-all text-white drop-shadow-lg"
             >
               ← Previous
             </button>
             <button
               onClick={onNext}
-              className="px-4 py-3 bg-black/20 hover:bg-gold/20 border border-gold/30 hover:border-gold/60 rounded-lg text-sm font-medium transition-all text-white"
+              className="px-4 py-3 bg-black/15 hover:bg-gold/20 border border-gold/40 hover:border-gold/70 rounded-lg text-sm font-medium transition-all text-white drop-shadow-lg"
             >
               Next →
             </button>
@@ -94,13 +94,13 @@ export const ControlPanel = ({
 
         {/* Adjustments */}
         <div className="space-y-4">
-          <h3 className="text-sm md:text-base font-semibold text-gold">⚙️ Adjustments</h3>
+          <h3 className="text-sm md:text-base font-semibold text-gold drop-shadow-lg">⚙️ Adjustments</h3>
 
           {/* Chain Size */}
           <div className="space-y-2">
             <div className="flex justify-between text-xs md:text-sm">
-              <span className="text-white">Chain Size</span>
-              <span className="text-gold font-semibold">{Math.round(chainScale * 100)}%</span>
+              <span className="text-white drop-shadow-lg">Chain Size</span>
+              <span className="text-gold font-semibold drop-shadow-lg">{Math.round(chainScale * 100)}%</span>
             </div>
             <input
               type="range"
@@ -116,8 +116,8 @@ export const ControlPanel = ({
           {/* Vertical Position */}
           <div className="space-y-2">
             <div className="flex justify-between text-xs md:text-sm">
-              <span className="text-white">Vertical Position</span>
-              <span className="text-gold font-semibold">{verticalOffset.toFixed(2)}</span>
+              <span className="text-white drop-shadow-lg">Vertical Position</span>
+              <span className="text-gold font-semibold drop-shadow-lg">{verticalOffset.toFixed(2)}</span>
             </div>
             <input
               type="range"
