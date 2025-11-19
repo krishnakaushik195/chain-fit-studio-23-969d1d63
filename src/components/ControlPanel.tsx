@@ -37,18 +37,31 @@ export const ControlPanel = ({
   return (
     <>
       {/* Floating Action Buttons - Mobile Only */}
-      <div className="fixed bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-3 z-50 md:hidden">
+      <div className={cn(
+        "fixed left-1/2 -translate-x-1/2 flex items-center gap-3 z-50 md:hidden transition-all duration-300",
+        isCollapsed ? "bottom-4" : "top-4"
+      )}>
         <button
           onClick={onScreenshot}
-          className="w-12 h-12 rounded-full bg-gold hover:bg-gold/80 active:scale-90 transition-all flex items-center justify-center shadow-lg shadow-gold/60"
+          className={cn(
+            "w-12 h-12 rounded-full flex items-center justify-center transition-all",
+            isCollapsed 
+              ? "bg-gold hover:bg-gold/80 shadow-lg shadow-gold/60" 
+              : "bg-gold/20 backdrop-blur-none border-2 border-gold/50 hover:border-gold active:scale-90"
+          )}
           aria-label="Take screenshot"
         >
-          <Camera className="w-6 h-6 text-black" />
+          <Camera className={cn("w-6 h-6", isCollapsed ? "text-black" : "text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.9)]")} />
         </button>
         
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="bg-gold text-black px-6 py-2 rounded-lg shadow-lg shadow-gold/60 hover:bg-gold/80 active:scale-95 transition-all text-base font-semibold"
+          className={cn(
+            "px-6 py-2 rounded-lg transition-all text-base font-semibold",
+            isCollapsed
+              ? "bg-gold text-black shadow-lg shadow-gold/60 hover:bg-gold/80"
+              : "bg-gold/20 backdrop-blur-none border-2 border-gold/50 text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.9)] hover:border-gold"
+          )}
         >
           Controls
         </button>
