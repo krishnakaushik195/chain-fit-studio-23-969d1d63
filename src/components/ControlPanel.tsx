@@ -35,36 +35,42 @@ export const ControlPanel = ({
   return (
     <div
       className={cn(
-        'fixed md:static bottom-0 left-0 right-0 glass-panel border-t border-gold/20 md:border-r md:border-t-0 md:w-[350px] max-h-[35vh] md:max-h-screen overflow-y-auto transition-transform duration-300 z-50',
-        isCollapsed && 'translate-y-[calc(100%-56px)] md:translate-y-0'
+        'fixed md:static md:border-r md:border-t-0 md:w-[350px] md:max-h-screen overflow-y-auto transition-all duration-300 z-50',
+        'md:glass-panel md:border-gold/20',
+        isCollapsed 
+          ? 'bottom-4 left-1/2 -translate-x-1/2 w-auto rounded-full px-6 py-3 bg-gold hover:scale-105 shadow-2xl' 
+          : 'bottom-0 left-0 right-0 max-h-[60vh] glass-panel border-t border-gold/20 rounded-t-3xl'
       )}
     >
       {/* Mobile Header */}
       <div
         className={cn(
-          "md:hidden flex justify-between items-center p-4 cursor-pointer border-b",
+          "md:hidden flex items-center cursor-pointer",
           isCollapsed 
-            ? "bg-gold border-gold text-black" 
-            : "bg-transparent border-gold/20 text-white"
+            ? "justify-center gap-2" 
+            : "justify-between p-4 border-b border-gold/20"
         )}
         onClick={() => setIsCollapsed(!isCollapsed)}
       >
         <div className={cn(
-          "text-base font-semibold",
-          !isCollapsed && "drop-shadow-[0_0_8px_rgba(255,255,255,0.9)]"
+          "font-semibold text-black",
+          isCollapsed ? "text-sm" : "text-base text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.9)]"
         )}>
           Controls
         </div>
         <ChevronDown
           className={cn(
-            'w-6 h-6 transition-transform',
-            !isCollapsed && 'rotate-180 drop-shadow-[0_0_8px_rgba(255,255,255,0.9)]'
+            'w-5 h-5 transition-transform text-black',
+            !isCollapsed && 'rotate-180 text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.9)]'
           )}
         />
       </div>
 
       {/* Content */}
-      <div className="p-5 md:p-8 space-y-6">
+      <div className={cn(
+        "space-y-6",
+        !isCollapsed && "p-5 md:p-8"
+      )}>
         {/* Adjustments */}
         <div className="space-y-4">
           <h3 className="text-sm md:text-base font-semibold text-gold drop-shadow-[0_0_10px_rgba(212,175,55,1)]">Adjustments</h3>
