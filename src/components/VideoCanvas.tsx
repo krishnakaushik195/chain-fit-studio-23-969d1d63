@@ -25,12 +25,23 @@ export const VideoCanvas = ({
   const faceMeshRef = useRef<any>(null);
   const chainImageRef = useRef<HTMLImageElement>(new Image());
   const isProcessingRef = useRef(false);
+  const chainScaleRef = useRef(chainScale);
+  const verticalOffsetRef = useRef(verticalOffset);
 
   useEffect(() => {
     if (currentChain) {
       chainImageRef.current.src = currentChain.data;
     }
   }, [currentChain]);
+
+  // Keep latest slider values in refs so MediaPipe callback sees updates
+  useEffect(() => {
+    chainScaleRef.current = chainScale;
+  }, [chainScale]);
+
+  useEffect(() => {
+    verticalOffsetRef.current = verticalOffset;
+  }, [verticalOffset]);
 
   const startCamera = async () => {
     try {
@@ -117,7 +128,7 @@ export const VideoCanvas = ({
     verticalOff += widthFactor * faceLength * 0.8;
 
     // Stronger user-controlled vertical adjustment (up/down on chest)
-    const userOffsetPx = verticalOffset * faceLength * 3;
+    const userOffsetPx = verticalOffsetRef.current * faceLength * 3;
 
     const neckX = jawMidX;
     const neckY = chin.y + verticalOff + userOffsetPx;
@@ -126,8 +137,8 @@ export const VideoCanvas = ({
     const targetH = chainImageRef.current.height * (targetW / chainImageRef.current.width);
     
     // Apply user's scale adjustment
-    const chainW = targetW * chainScale;
-    const chainH = targetH * chainScale;
+    const chainW = targetW * chainScaleRef.current;
+    const chainH = targetH * chainScaleRef.current;
 
     const angle = Math.atan2(jawR.y - jawL.y, jawR.x - jawL.x);
 
