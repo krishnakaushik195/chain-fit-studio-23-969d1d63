@@ -37,7 +37,7 @@ export const ControlPanel = ({
       className={cn(
         'fixed left-1/2 -translate-x-1/2 md:static md:translate-x-0 md:left-auto border md:border-r md:w-[350px] max-h-[35vh] md:max-h-screen overflow-y-auto transition-all duration-500 ease-out z-50 rounded-2xl md:rounded-none',
         isCollapsed 
-          ? 'bottom-8 bg-black border-gold/40 scale-90 w-auto' 
+          ? 'bottom-8 bg-transparent border-transparent scale-90 w-auto' 
           : 'bottom-4 glass-panel border-gold/20 scale-100 w-[calc(100%-2rem)] max-w-[500px] md:max-w-none md:bottom-0'
       )}
     >
