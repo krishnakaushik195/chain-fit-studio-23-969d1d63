@@ -42,25 +42,29 @@ export const ControlPanel = ({
       {/* Mobile Header */}
       <div
         className={cn(
-          "md:hidden flex justify-between items-center p-4 cursor-pointer border-b",
+          "md:hidden cursor-pointer",
           isCollapsed 
-            ? "bg-gold border-gold text-black" 
-            : "bg-transparent border-gold/20 text-white"
+            ? "mx-auto my-4 w-fit" 
+            : "w-full"
         )}
         onClick={() => setIsCollapsed(!isCollapsed)}
       >
         <div className={cn(
-          "text-base font-semibold",
-          !isCollapsed && "drop-shadow-[0_0_8px_rgba(255,255,255,0.9)]"
+          "flex items-center gap-2 transition-all",
+          isCollapsed 
+            ? "bg-gold text-black px-6 py-2 rounded-lg" 
+            : "bg-transparent text-white p-4 border-b border-gold/20 justify-between"
         )}>
-          Controls
-        </div>
-        <ChevronDown
-          className={cn(
-            'w-6 h-6 transition-transform',
-            !isCollapsed && 'rotate-180 drop-shadow-[0_0_8px_rgba(255,255,255,0.9)]'
+          <div className={cn(
+            "text-base font-semibold",
+            !isCollapsed && "drop-shadow-[0_0_8px_rgba(255,255,255,0.9)]"
+          )}>
+            Controls
+          </div>
+          {!isCollapsed && (
+            <ChevronDown className="w-6 h-6 rotate-180 drop-shadow-[0_0_8px_rgba(255,255,255,0.9)]" />
           )}
-        />
+        </div>
       </div>
 
       {/* Content */}
