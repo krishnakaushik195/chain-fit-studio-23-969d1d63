@@ -41,13 +41,13 @@ export const ControlPanel = ({
     >
       {/* Mobile Header */}
       <div
-        className="md:hidden flex justify-between items-center p-4 bg-transparent backdrop-blur-md cursor-pointer border-b border-gold/40"
+        className="md:hidden flex justify-between items-center p-4 bg-gold cursor-pointer border-b border-gold"
         onClick={() => setIsCollapsed(!isCollapsed)}
       >
-        <div className="text-white text-base font-semibold drop-shadow-[0_0_8px_rgba(255,255,255,0.9)]">⚙️ Controls</div>
+        <div className="text-black text-base font-semibold">Controls</div>
         <ChevronDown
           className={cn(
-            'w-6 h-6 transition-transform text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.9)]',
+            'w-6 h-6 transition-transform text-black',
             !isCollapsed && 'rotate-180'
           )}
         />
@@ -61,9 +61,9 @@ export const ControlPanel = ({
 
           {/* Chain Size */}
           <div className="space-y-2">
-            <div className="flex justify-between text-xs md:text-sm">
-              <span className="text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.9)]">Chain Size</span>
+            <div className="flex items-center gap-2 text-xs md:text-sm">
               <span className="text-gold font-semibold drop-shadow-[0_0_10px_rgba(212,175,55,1)]">{Math.round(chainScale * 100)}%</span>
+              <span className="text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.9)]">Chain Size</span>
             </div>
             <input
               type="range"
@@ -97,7 +97,38 @@ export const ControlPanel = ({
         {/* Chain Selection */}
         <div className="space-y-4">
           <h3 className="text-sm md:text-base font-semibold text-gold drop-shadow-[0_0_10px_rgba(212,175,55,1)]">Select Chain</h3>
+          
+          <div className="grid grid-cols-2 md:grid-cols-1 gap-2 md:max-h-[250px] md:overflow-y-auto">
+            {chains.map((chain, idx) => (
+              <button
+                key={idx}
+                onClick={() => onSelectChain(idx)}
+                className={cn(
+                  'p-4 rounded-lg text-sm text-center transition-all border-2 text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.9)]',
+                  idx === currentIndex
+                    ? 'bg-gold/30 border-gold border-[3px] shadow-lg shadow-gold/50'
+                    : 'bg-transparent border-gold/50 hover:bg-gold/10 hover:border-gold'
+                )}
+              >
+                {chain.name}
+              </button>
+            ))}
+          </div>
 
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              onClick={onPrevious}
+              className="px-4 py-3 bg-transparent hover:bg-gold/20 border-2 border-gold/60 hover:border-gold rounded-lg text-sm font-medium transition-all text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.9)]"
+            >
+              ← Previous
+            </button>
+            <button
+              onClick={onNext}
+              className="px-4 py-3 bg-transparent hover:bg-gold/20 border-2 border-gold/60 hover:border-gold rounded-lg text-sm font-medium transition-all text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.9)]"
+            >
+              Next →
+            </button>
+          </div>
         </div>
       </div>
     </div>
