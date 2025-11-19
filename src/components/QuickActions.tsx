@@ -7,7 +7,7 @@ interface QuickActionsProps {
 
 export const QuickActions = ({ onPrevious, onNext }: QuickActionsProps) => {
   return (
-    <div className="fixed right-4 top-4 md:hidden flex flex-col gap-3 z-40">
+    <div className="fixed right-4 top-1/2 -translate-y-1/2 md:hidden flex flex-col gap-3 z-40">
       <button
         onClick={onPrevious}
         className="w-12 h-12 rounded-full bg-gold border-2 border-gold flex items-center justify-center hover:bg-gold/80 active:scale-90 transition-all"
