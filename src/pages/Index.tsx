@@ -1,12 +1,119 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useEffect, useState, useCallback } from 'react';
+import { VideoCanvas } from '@/components/VideoCanvas';
+import { ControlPanel } from '@/components/ControlPanel';
+import { StatusBar } from '@/components/StatusBar';
+import { QuickActions } from '@/components/QuickActions';
+import { toast } from 'sonner';
+
+interface Chain {
+  name: string;
+  data: string;
+}
 
 const Index = () => {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
+  const [chains, setChains] = useState<Chain[]>([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [chainScale, setChainScale] = useState(1.0);
+  const [verticalOffset, setVerticalOffset] = useState(0.20);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isCameraReady, setIsCameraReady] = useState(false);
+
+  // Fetch chains from Flask backend
+  useEffect(() => {
+    const fetchChains = async () => {
+      try {
+        const response = await fetch('/api/chains');
+        const data = await response.json();
+        
+        if (data.chains && data.chains.length > 0) {
+          setChains(data.chains);
+          toast.success(`Loaded ${data.chains.length} chains`);
+        } else {
+          toast.error('No chains found');
+        }
+      } catch (error) {
+        console.error('Error loading chains:', error);
+        toast.error('Failed to load chains. Make sure Flask backend is running.');
+        
+        // Fallback mock data for development
+        setChains([
+          { name: 'Gold Chain', data: '/placeholder.svg' },
+          { name: 'Silver Chain', data: '/placeholder.svg' },
+          { name: 'Diamond Chain', data: '/placeholder.svg' },
+        ]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchChains();
+  }, []);
+
+  const selectChain = useCallback((index: number) => {
+    setCurrentIndex(index);
+  }, []);
+
+  const previousChain = useCallback(() => {
+    setCurrentIndex((prev) => (prev - 1 + chains.length) % chains.length);
+  }, [chains.length]);
+
+  const nextChain = useCallback(() => {
+    setCurrentIndex((prev) => (prev + 1) % chains.length);
+  }, [chains.length]);
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') previousChain();
+      if (e.key === 'ArrowRight') nextChain();
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [previousChain, nextChain]);
+
+  const currentChain = chains[currentIndex] || null;
+  const statusText = isCameraReady && currentChain
+    ? `🟢 ${currentChain.name}`
+    : isLoading
+    ? 'Loading chains...'
+    : 'Click Start Camera';
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-center space-y-4">
+          <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="text-primary font-medium">Loading Chain Fit Studio...</p>
+        </div>
       </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col md:flex-row h-screen w-screen overflow-hidden">
+      <StatusBar status={statusText} isActive={isCameraReady} />
+      
+      <ControlPanel
+        chains={chains}
+        currentIndex={currentIndex}
+        onSelectChain={selectChain}
+        chainScale={chainScale}
+        onChainScaleChange={setChainScale}
+        verticalOffset={verticalOffset}
+        onVerticalOffsetChange={setVerticalOffset}
+        onPrevious={previousChain}
+        onNext={nextChain}
+      />
+      
+      <VideoCanvas
+        currentChain={currentChain}
+        chainScale={chainScale}
+        verticalOffset={verticalOffset}
+        onCameraReady={() => setIsCameraReady(true)}
+      />
+      
+      <QuickActions onPrevious={previousChain} onNext={nextChain} />
     </div>
   );
 };
