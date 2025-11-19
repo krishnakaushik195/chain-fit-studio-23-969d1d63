@@ -101,6 +101,19 @@ export const VideoCanvas = ({
       faceMeshRef.current = faceMesh;
 
       if (videoRef.current) {
+        // Request camera with wider field of view to show neck area
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            width: { ideal: 1280 },
+            height: { ideal: 720 },
+            aspectRatio: { ideal: 16/9 },
+            facingMode: 'user',
+          }
+        });
+        
+        videoRef.current.srcObject = stream;
+        await videoRef.current.play();
+
         const camera = new CameraCtor(videoRef.current, {
           onFrame: async () => {
             if (!isProcessingRef.current && videoRef.current) {
@@ -109,8 +122,8 @@ export const VideoCanvas = ({
               isProcessingRef.current = false;
             }
           },
-          width: window.innerWidth > 768 ? 1280 : 720,
-          height: window.innerWidth > 768 ? 720 : 1280,
+          width: 1280,
+          height: 720,
         });
 
         await camera.start();
