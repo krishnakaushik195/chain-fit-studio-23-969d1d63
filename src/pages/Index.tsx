@@ -144,7 +144,7 @@ const Index = () => {
       <QuickActions onPrevious={previousChain} onNext={nextChain} />
       
       {/* Footer - Powered by */}
-      <div className="fixed bottom-4 right-4 bg-gold/10 backdrop-blur-sm border border-gold/20 rounded-lg px-3 py-2 text-center z-30">
+      <div className="fixed top-20 right-4 bg-gold/10 backdrop-blur-sm border border-gold/20 rounded-lg px-3 py-2 text-center z-30">
         <p className="text-[10px] md:text-xs gold-text font-medium">
           Powered by Sai Ram Jewelers
         </p>
