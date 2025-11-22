@@ -10,12 +10,12 @@ interface Chain {
   data: string;
 }
 
-// Google Drive direct links for chain images
+// Google Drive direct links for chain images (using usercontent.google.com format)
 const GOOGLE_DRIVE_CHAINS = [
-  { name: 'Chain 1', data: 'https://drive.google.com/uc?export=view&id=1RKvoPREyYrmgasOp_8gzxDxpuJYPNlcV' },
-  { name: 'Chain 2', data: 'https://drive.google.com/uc?export=view&id=11k0Rxu8gWa1dFbPd1oJEhKS2zR2uo3yz' },
+  { name: 'Chain 1', data: 'https://drive.usercontent.google.com/download?id=1RKvoPREyYrmgasOp_8gzxDxpuJYPNlcV&export=view' },
+  { name: 'Chain 2', data: 'https://drive.usercontent.google.com/download?id=11k0Rxu8gWa1dFbPd1oJEhKS2zR2uo3yz&export=view' },
   // Add more chains here with format:
-  // { name: 'Chain X', data: 'https://drive.google.com/uc?export=view&id=YOUR_FILE_ID' },
+  // { name: 'Chain X', data: 'https://drive.usercontent.google.com/download?id=YOUR_FILE_ID&export=view' },
 ];
 
 const Index = () => {
