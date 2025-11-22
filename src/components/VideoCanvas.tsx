@@ -5,10 +5,18 @@ interface Chain {
   data: string;
 }
 
+interface Earring {
+  name: string;
+  data: string;
+}
+
 interface VideoCanvasProps {
   currentChain: Chain | null;
   chainScale: number;
   verticalOffset: number;
+  currentEarring: Earring | null;
+  earringScale: number;
+  showEarrings: boolean;
   onCameraReady: () => void;
 }
 
@@ -16,6 +24,9 @@ export const VideoCanvas = ({
   currentChain,
   chainScale,
   verticalOffset,
+  currentEarring,
+  earringScale,
+  showEarrings,
   onCameraReady,
 }: VideoCanvasProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -23,9 +34,12 @@ export const VideoCanvas = ({
   const [error, setError] = useState<string | null>(null);
   const faceMeshRef = useRef<any>(null);
   const chainImageRef = useRef<HTMLImageElement>(new Image());
+  const earringImageRef = useRef<HTMLImageElement>(new Image());
   const isProcessingRef = useRef(false);
   const chainScaleRef = useRef(chainScale);
   const verticalOffsetRef = useRef(verticalOffset);
+  const earringScaleRef = useRef(earringScale);
+  const showEarringsRef = useRef(showEarrings);
 
   useEffect(() => {
     if (currentChain) {
@@ -57,6 +71,36 @@ export const VideoCanvas = ({
   useEffect(() => {
     verticalOffsetRef.current = verticalOffset;
   }, [verticalOffset]);
+
+  useEffect(() => {
+    earringScaleRef.current = earringScale;
+  }, [earringScale]);
+
+  useEffect(() => {
+    showEarringsRef.current = showEarrings;
+  }, [showEarrings]);
+
+  // Load earring image
+  useEffect(() => {
+    if (currentEarring) {
+      console.log('👂 Loading earring image:', currentEarring.name);
+      
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      
+      img.onload = () => {
+        console.log('✅ Earring image loaded successfully');
+        earringImageRef.current = img;
+      };
+      
+      img.onerror = (err) => {
+        console.error('❌ Failed to load earring image:', err);
+        setError('Failed to load earring image.');
+      };
+      
+      img.src = currentEarring.data;
+    }
+  }, [currentEarring]);
 
   const startCamera = async () => {
     try {
@@ -178,9 +222,14 @@ export const VideoCanvas = ({
     if (results.multiFaceLandmarks && results.multiFaceLandmarks.length > 0) {
       const landmarks = results.multiFaceLandmarks[0];
       
-      // Only draw chain if image is loaded
+      // Draw chain if image is loaded
       if (chainImageRef.current && chainImageRef.current.complete && chainImageRef.current.naturalWidth > 0) {
         drawChain(landmarks, canvas.width, canvas.height, ctx);
+      }
+
+      // Draw earrings if enabled and image is loaded
+      if (showEarringsRef.current && earringImageRef.current && earringImageRef.current.complete && earringImageRef.current.naturalWidth > 0) {
+        drawEarrings(landmarks, canvas.width, canvas.height, ctx);
       }
     }
   };
@@ -243,6 +292,46 @@ export const VideoCanvas = ({
     ctx.translate(neckX, neckY + faceLength * 0.15);
     ctx.rotate(angle);
     ctx.drawImage(chainImageRef.current, -chainW / 2, 0, chainW, chainH);
+    ctx.restore();
+  };
+
+  const drawEarrings = (
+    landmarks: any[],
+    w: number,
+    h: number,
+    ctx: CanvasRenderingContext2D
+  ) => {
+    // MediaPipe Face Mesh ear landmarks
+    // These are approximate ear positions for earring placement
+    const LEFT_EAR = 234;  // Left ear tragion (upper ear attachment)
+    const RIGHT_EAR = 454; // Right ear tragion (upper ear attachment)
+    
+    const leftEar = { x: landmarks[LEFT_EAR].x * w, y: landmarks[LEFT_EAR].y * h };
+    const rightEar = { x: landmarks[RIGHT_EAR].x * w, y: landmarks[RIGHT_EAR].y * h };
+
+    // Calculate earring size based on face size
+    const JAW_LEFT = 234;
+    const JAW_RIGHT = 454;
+    const jawL = { x: landmarks[JAW_LEFT].x * w, y: landmarks[JAW_LEFT].y * h };
+    const jawR = { x: landmarks[JAW_RIGHT].x * w, y: landmarks[JAW_RIGHT].y * h };
+    const faceWidth = Math.sqrt((jawR.x - jawL.x) ** 2 + (jawR.y - jawL.y) ** 2);
+    
+    // Earring size is proportional to face width
+    const baseEarringSize = faceWidth * 0.15;
+    const earringW = baseEarringSize * earringScaleRef.current;
+    const earringH = (earringImageRef.current.height * earringW) / earringImageRef.current.width;
+
+    // Draw left earring
+    ctx.save();
+    ctx.translate(leftEar.x, leftEar.y);
+    ctx.drawImage(earringImageRef.current, -earringW / 2, 0, earringW, earringH);
+    ctx.restore();
+
+    // Draw right earring (mirrored)
+    ctx.save();
+    ctx.translate(rightEar.x, rightEar.y);
+    ctx.scale(-1, 1); // Mirror for right side
+    ctx.drawImage(earringImageRef.current, -earringW / 2, 0, earringW, earringH);
     ctx.restore();
   };
 
