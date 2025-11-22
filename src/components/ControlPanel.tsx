@@ -89,9 +89,9 @@ export const ControlPanel = ({
         </div>
 
       {/* Content */}
-      <div className="p-5 md:p-8 space-y-6">
+      <div className="p-5 md:p-8 space-y-6 flex flex-col max-h-full">
         {/* Adjustments */}
-        <div className="space-y-4">
+        <div className="space-y-4 flex-shrink-0">
           <h3 className="text-sm md:text-base font-semibold text-gold drop-shadow-[0_0_10px_rgba(212,175,55,1)]">
             Adjustments
           </h3>
@@ -140,12 +140,12 @@ export const ControlPanel = ({
         </div>
 
         {/* Chain Selection */}
-        <div className="space-y-4">
+        <div className="space-y-4 flex-shrink-0 flex flex-col min-h-0">
           <h3 className="text-sm md:text-base font-semibold text-gold drop-shadow-[0_0_10px_rgba(212,175,55,1)]">
             Select Chain
           </h3>
 
-          <div className="grid grid-cols-2 md:grid-cols-1 gap-2 md:max-h-[250px] md:overflow-y-auto">
+          <div className="grid grid-cols-2 md:grid-cols-1 gap-2 overflow-y-auto overscroll-contain scrollbar-hide">
             {chains.map((chain, idx) => (
               <button
                 key={idx}
