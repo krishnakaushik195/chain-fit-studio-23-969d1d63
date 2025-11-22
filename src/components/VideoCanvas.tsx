@@ -44,6 +44,7 @@ export const VideoCanvas = ({
 
   const startCamera = async () => {
     try {
+      console.log('🎥 Starting camera...');
       setError(null);
 
       // --- Load MediaPipe scripts from CDN and use global constructors ---
@@ -74,8 +75,8 @@ export const VideoCanvas = ({
       const FaceMeshCtor = (window as any).FaceMesh;
       const CameraCtor = (window as any).Camera;
 
-      console.log('Global FaceMeshCtor:', FaceMeshCtor);
-      console.log('Global CameraCtor:', CameraCtor);
+      console.log('✅ MediaPipe loaded - FaceMesh:', !!FaceMeshCtor);
+      console.log('✅ MediaPipe loaded - Camera:', !!CameraCtor);
 
       if (typeof FaceMeshCtor !== 'function' || typeof CameraCtor !== 'function') {
         throw new Error(
@@ -98,6 +99,7 @@ export const VideoCanvas = ({
 
       faceMesh.onResults(onResults);
       faceMeshRef.current = faceMesh;
+      console.log('✅ FaceMesh initialized');
 
       if (videoRef.current) {
         // Request camera with wider field of view to show neck area
@@ -112,12 +114,17 @@ export const VideoCanvas = ({
         
         videoRef.current.srcObject = stream;
         await videoRef.current.play();
+        console.log('✅ Camera stream started');
 
         const camera = new CameraCtor(videoRef.current, {
           onFrame: async () => {
             if (!isProcessingRef.current && videoRef.current) {
               isProcessingRef.current = true;
-              await faceMesh.send({ image: videoRef.current });
+              try {
+                await faceMesh.send({ image: videoRef.current });
+              } catch (err) {
+                console.error('❌ Frame processing error:', err);
+              }
               isProcessingRef.current = false;
             }
           },
@@ -126,6 +133,7 @@ export const VideoCanvas = ({
         });
 
         await camera.start();
+        console.log('✅ Camera processing started');
         onCameraReady();
       }
     } catch (err) {
@@ -140,7 +148,10 @@ export const VideoCanvas = ({
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext('2d');
 
-    if (!canvas || !ctx) return;
+    if (!canvas || !ctx) {
+      console.warn('⚠️ Canvas or context not available');
+      return;
+    }
 
     canvas.width = results.image.width;
     canvas.height = results.image.height;
@@ -156,7 +167,12 @@ export const VideoCanvas = ({
 
   // Auto-start camera on mount
   useEffect(() => {
+    console.log('🚀 Component mounted, starting camera...');
     startCamera();
+    
+    return () => {
+      console.log('🛑 Component unmounting, cleaning up...');
+    };
   }, []);
 
   const drawChain = (
