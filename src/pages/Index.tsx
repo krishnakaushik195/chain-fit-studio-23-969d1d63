@@ -10,6 +10,11 @@ interface Chain {
   data: string;
 }
 
+interface Earring {
+  name: string;
+  data: string;
+}
+
 // =========================
 // AUTO-LOAD CHAIN IMAGES
 // =========================
@@ -27,20 +32,41 @@ const AUTO_CHAINS: Chain[] = Object.keys(chainImages)
     };
   });
 
+// =========================
+// AUTO-LOAD EARRING IMAGES
+// =========================
+const earringImages = import.meta.glob('/public/earrings/*.(png|jpg|jpeg|webp)', { eager: true, as: 'url' });
+
+const AUTO_EARRINGS: Earring[] = Object.keys(earringImages)
+  .sort()
+  .map((path, index) => {
+    const filename = path.split('/').pop()?.replace(/\.(png|jpg|jpeg|webp)$/i, '') || `Earring ${index + 1}`;
+    return {
+      name: filename.charAt(0).toUpperCase() + filename.slice(1),
+      data: path.replace('/public', '')
+    };
+  });
+
 const Index = () => {
   const [chains, setChains] = useState<Chain[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [chainScale, setChainScale] = useState(1.0);
   const [verticalOffset, setVerticalOffset] = useState(-0.20);
 
+  const [earrings, setEarrings] = useState<Earring[]>([]);
+  const [currentEarringIndex, setCurrentEarringIndex] = useState(0);
+  const [earringScale, setEarringScale] = useState(1.0);
+  const [showEarrings, setShowEarrings] = useState(false);
+
   const [isLoading, setIsLoading] = useState(true);
   const [isCameraReady, setIsCameraReady] = useState(false);
 
-  // Load chains automatically from folder
+  // Load chains and earrings automatically from folders
   useEffect(() => {
     setChains(AUTO_CHAINS);
+    setEarrings(AUTO_EARRINGS);
     setIsLoading(false);
-    toast.success(`Loaded ${AUTO_CHAINS.length} chains from folder`);
+    toast.success(`Loaded ${AUTO_CHAINS.length} chains and ${AUTO_EARRINGS.length} earrings`);
   }, []);
 
   const selectChain = useCallback((index: number) => {
@@ -54,6 +80,18 @@ const Index = () => {
   const nextChain = useCallback(() => {
     setCurrentIndex((prev) => (prev + 1) % chains.length);
   }, [chains.length]);
+
+  const selectEarring = useCallback((index: number) => {
+    setCurrentEarringIndex(index);
+  }, []);
+
+  const previousEarring = useCallback(() => {
+    setCurrentEarringIndex((prev) => (prev - 1 + earrings.length) % earrings.length);
+  }, [earrings.length]);
+
+  const nextEarring = useCallback(() => {
+    setCurrentEarringIndex((prev) => (prev + 1) % earrings.length);
+  }, [earrings.length]);
 
   // Take screenshot from camera
   const handleScreenshot = useCallback(() => {
@@ -96,12 +134,13 @@ const Index = () => {
   }, [previousChain, nextChain]);
 
   const currentChain = chains[currentIndex] || null;
+  const currentEarring = earrings[currentEarringIndex] || null;
 
   const statusText =
     isCameraReady && currentChain
-      ? `🟢 ${currentChain.name}`
+      ? `🟢 ${showEarrings ? currentEarring?.name || 'No Earring' : currentChain.name}`
       : isLoading
-      ? "Loading chains..."
+      ? "Loading..."
       : "Initializing camera...";
 
   if (isLoading) {
@@ -130,12 +169,24 @@ const Index = () => {
         onPrevious={previousChain}
         onNext={nextChain}
         onScreenshot={handleScreenshot}
+        earrings={earrings}
+        currentEarringIndex={currentEarringIndex}
+        onSelectEarring={selectEarring}
+        earringScale={earringScale}
+        onEarringScaleChange={setEarringScale}
+        onPreviousEarring={previousEarring}
+        onNextEarring={nextEarring}
+        showEarrings={showEarrings}
+        onToggleMode={setShowEarrings}
       />
 
       <VideoCanvas
         currentChain={currentChain}
         chainScale={chainScale}
         verticalOffset={verticalOffset}
+        currentEarring={currentEarring}
+        earringScale={earringScale}
+        showEarrings={showEarrings}
         onCameraReady={() => setIsCameraReady(true)}
       />
 
