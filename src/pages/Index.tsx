@@ -104,7 +104,7 @@ const Index = () => {
     ? `🟢 ${currentChain.name}`
     : isLoading
     ? 'Loading chains...'
-    : 'Click Start Camera';
+    : 'Initializing camera...';
 
   if (isLoading) {
     return (
