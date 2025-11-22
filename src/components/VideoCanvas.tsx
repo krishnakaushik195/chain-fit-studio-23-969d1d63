@@ -325,32 +325,72 @@ export const VideoCanvas = ({
     // MediaPipe Face Mesh ear landmarks
     const LEFT_EAR = 234;  // Left ear tragion landmark index
     const RIGHT_EAR = 454; // Right ear tragion landmark index
-    
-    // Get base ear positions
-    const leftEarBase = { x: landmarks[LEFT_EAR].x * w, y: landmarks[LEFT_EAR].y * h };
-    const rightEarBase = { x: landmarks[RIGHT_EAR].x * w, y: landmarks[RIGHT_EAR].y * h };
-    
-    // Get nose tip for face center reference
     const NOSE_TIP = 4;
-    const noseTip = { x: landmarks[NOSE_TIP].x * w, y: landmarks[NOSE_TIP].y * h };
+    const LEFT_CHEEK = 234;  // Left jawline point
+    const RIGHT_CHEEK = 454; // Right jawline point
+    
+    // Get landmarks with Z-depth data
+    const leftEarLandmark = landmarks[LEFT_EAR];
+    const rightEarLandmark = landmarks[RIGHT_EAR];
+    const noseTipLandmark = landmarks[NOSE_TIP];
+    
+    // Calculate head rotation (yaw) using Z-depth difference
+    // When head turns right, left ear Z increases (goes back), right ear Z decreases (comes forward)
+    // When head turns left, right ear Z increases (goes back), left ear Z decreases (comes forward)
+    const leftEarZ = leftEarLandmark.z || 0;
+    const rightEarZ = rightEarLandmark.z || 0;
+    const noseTipZ = noseTipLandmark.z || 0;
+    
+    // Calculate rotation factor: negative = turned left, positive = turned right
+    const zDiff = leftEarZ - rightEarZ;
+    const rotationFactor = Math.max(-1, Math.min(1, zDiff * 5)); // Normalized to -1 to 1
+    
+    // Calculate automatic depth push based on profile angle
+    // When in profile (|rotationFactor| close to 1), push earrings back significantly
+    const profileDepthPush = Math.abs(rotationFactor) * w * 0.15; // Pushes back when in profile
+    
+    // Base ear positions
+    const leftEarBase = { 
+      x: leftEarLandmark.x * w, 
+      y: leftEarLandmark.y * h,
+      z: leftEarZ
+    };
+    const rightEarBase = { 
+      x: rightEarLandmark.x * w, 
+      y: rightEarLandmark.y * h,
+      z: rightEarZ
+    };
+    const noseTip = { 
+      x: noseTipLandmark.x * w, 
+      y: noseTipLandmark.y * h,
+      z: noseTipZ
+    };
     
     // Calculate depth adjustment vectors (from nose to each ear)
     const leftVector = { x: leftEarBase.x - noseTip.x, y: leftEarBase.y - noseTip.y };
     const rightVector = { x: rightEarBase.x - noseTip.x, y: rightEarBase.y - noseTip.y };
     
-    // Normalize vectors and apply depth offset
+    // Normalize vectors
     const leftLength = Math.sqrt(leftVector.x ** 2 + leftVector.y ** 2);
     const rightLength = Math.sqrt(rightVector.x ** 2 + rightVector.y ** 2);
     
-    const depthAdjust = earringDepthOffsetRef.current * 0.5; // Scale factor for depth
+    // Automatic depth based on Z-coordinate and rotation
+    // For left ear: when turning right (rotationFactor > 0), it goes back (increase depth)
+    // For right ear: when turning left (rotationFactor < 0), it goes back (increase depth)
+    const leftAutoDepth = Math.max(0, rotationFactor) * profileDepthPush;
+    const rightAutoDepth = Math.max(0, -rotationFactor) * profileDepthPush;
     
+    // Manual depth adjustment (user control)
+    const manualDepthAdjust = earringDepthOffsetRef.current * 0.5;
+    
+    // Combine automatic and manual depth
     const leftDepthOffset = {
-      x: (leftVector.x / leftLength) * leftLength * depthAdjust,
-      y: (leftVector.y / leftLength) * leftLength * depthAdjust
+      x: (leftVector.x / leftLength) * (leftAutoDepth + manualDepthAdjust * leftLength),
+      y: (leftVector.y / leftLength) * (leftAutoDepth + manualDepthAdjust * leftLength)
     };
     const rightDepthOffset = {
-      x: (rightVector.x / rightLength) * rightLength * depthAdjust,
-      y: (rightVector.y / rightLength) * rightLength * depthAdjust
+      x: (rightVector.x / rightLength) * (rightAutoDepth + manualDepthAdjust * rightLength),
+      y: (rightVector.y / rightLength) * (rightAutoDepth + manualDepthAdjust * rightLength)
     };
     
     // Apply horizontal offset (positive = further apart, negative = closer together)
@@ -376,6 +416,9 @@ export const VideoCanvas = ({
     const jawR = { x: landmarks[JAW_RIGHT].x * w, y: landmarks[JAW_RIGHT].y * h };
     const faceWidth = Math.sqrt((jawR.x - jawL.x) ** 2 + (jawR.y - jawL.y) ** 2);
     
+    // Apply scale adjustment based on profile angle - earrings appear smaller when in profile
+    const profileScaleFactor = 1 - (Math.abs(rotationFactor) * 0.3); // Reduce size by up to 30% in full profile
+    
     // Check if earring image is loaded
     const hasEarringImage = earringImageRef.current && 
                             earringImageRef.current.complete && 
@@ -384,24 +427,34 @@ export const VideoCanvas = ({
     if (hasEarringImage) {
       // Draw earring images
       const baseEarringSize = faceWidth * 0.15;
-      const earringW = baseEarringSize * earringScaleRef.current;
+      const earringW = baseEarringSize * earringScaleRef.current * profileScaleFactor;
       const earringH = (earringImageRef.current.height * earringW) / earringImageRef.current.width;
+
+      // Opacity adjustment for depth perception - ear further away is slightly more transparent
+      const leftOpacity = 1 - Math.max(0, rotationFactor * 0.3); // Fades when turning right
+      const rightOpacity = 1 - Math.max(0, -rotationFactor * 0.3); // Fades when turning left
 
       // Draw left earring
       ctx.save();
+      ctx.globalAlpha = leftOpacity;
       ctx.translate(leftEar.x, leftEar.y);
       ctx.drawImage(earringImageRef.current, -earringW / 2, 0, earringW, earringH);
       ctx.restore();
 
       // Draw right earring (mirrored)
       ctx.save();
+      ctx.globalAlpha = rightOpacity;
       ctx.translate(rightEar.x, rightEar.y);
       ctx.scale(-1, 1);
       ctx.drawImage(earringImageRef.current, -earringW / 2, 0, earringW, earringH);
       ctx.restore();
     } else {
       // Draw gold dots as fallback
-      const dotRadius = (faceWidth * 0.02) * earringScaleRef.current;
+      const dotRadius = (faceWidth * 0.02) * earringScaleRef.current * profileScaleFactor;
+      
+      // Opacity adjustment for depth perception
+      const leftOpacity = 1 - Math.max(0, rotationFactor * 0.3);
+      const rightOpacity = 1 - Math.max(0, -rotationFactor * 0.3);
       
       // Gold color
       ctx.fillStyle = '#D4AF37';
@@ -409,14 +462,20 @@ export const VideoCanvas = ({
       ctx.shadowBlur = 15;
       
       // Draw left dot
+      ctx.save();
+      ctx.globalAlpha = leftOpacity;
       ctx.beginPath();
       ctx.arc(leftEar.x, leftEar.y, dotRadius, 0, Math.PI * 2);
       ctx.fill();
+      ctx.restore();
       
       // Draw right dot
+      ctx.save();
+      ctx.globalAlpha = rightOpacity;
       ctx.beginPath();
       ctx.arc(rightEar.x, rightEar.y, dotRadius, 0, Math.PI * 2);
       ctx.fill();
+      ctx.restore();
       
       // Reset shadow
       ctx.shadowBlur = 0;
