@@ -29,7 +29,23 @@ export const VideoCanvas = ({
 
   useEffect(() => {
     if (currentChain) {
-      chainImageRef.current.src = currentChain.data;
+      console.log('🖼️ Loading chain image:', currentChain.name);
+      
+      const img = new Image();
+      img.crossOrigin = 'anonymous'; // Allow CORS
+      
+      img.onload = () => {
+        console.log('✅ Chain image loaded successfully');
+        chainImageRef.current = img;
+      };
+      
+      img.onerror = (err) => {
+        console.error('❌ Failed to load chain image:', err);
+        console.error('Image URL:', currentChain.data);
+        setError('Failed to load chain image from Google Drive. The image may not be publicly accessible.');
+      };
+      
+      img.src = currentChain.data;
     }
   }, [currentChain]);
 
@@ -161,7 +177,11 @@ export const VideoCanvas = ({
 
     if (results.multiFaceLandmarks && results.multiFaceLandmarks.length > 0) {
       const landmarks = results.multiFaceLandmarks[0];
-      drawChain(landmarks, canvas.width, canvas.height, ctx);
+      
+      // Only draw chain if image is loaded
+      if (chainImageRef.current && chainImageRef.current.complete && chainImageRef.current.naturalWidth > 0) {
+        drawChain(landmarks, canvas.width, canvas.height, ctx);
+      }
     }
   };
 
