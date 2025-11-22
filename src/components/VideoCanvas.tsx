@@ -18,6 +18,7 @@ interface VideoCanvasProps {
   earringScale: number;
   earringHorizontalOffset: number;
   earringVerticalOffset: number;
+  earringDepthOffset: number;
   showEarrings: boolean;
   onCameraReady: () => void;
 }
@@ -30,6 +31,7 @@ export const VideoCanvas = ({
   earringScale,
   earringHorizontalOffset,
   earringVerticalOffset,
+  earringDepthOffset,
   showEarrings,
   onCameraReady,
 }: VideoCanvasProps) => {
@@ -45,6 +47,7 @@ export const VideoCanvas = ({
   const earringScaleRef = useRef(earringScale);
   const earringHorizontalOffsetRef = useRef(earringHorizontalOffset);
   const earringVerticalOffsetRef = useRef(earringVerticalOffset);
+  const earringDepthOffsetRef = useRef(earringDepthOffset);
   const showEarringsRef = useRef(showEarrings);
 
   useEffect(() => {
@@ -89,6 +92,10 @@ export const VideoCanvas = ({
   useEffect(() => {
     earringVerticalOffsetRef.current = earringVerticalOffset;
   }, [earringVerticalOffset]);
+
+  useEffect(() => {
+    earringDepthOffsetRef.current = earringDepthOffset;
+  }, [earringDepthOffset]);
 
   useEffect(() => {
     showEarringsRef.current = showEarrings;
@@ -323,20 +330,43 @@ export const VideoCanvas = ({
     const leftEarBase = { x: landmarks[LEFT_EAR].x * w, y: landmarks[LEFT_EAR].y * h };
     const rightEarBase = { x: landmarks[RIGHT_EAR].x * w, y: landmarks[RIGHT_EAR].y * h };
     
+    // Get nose tip for face center reference
+    const NOSE_TIP = 4;
+    const noseTip = { x: landmarks[NOSE_TIP].x * w, y: landmarks[NOSE_TIP].y * h };
+    
+    // Calculate depth adjustment vectors (from nose to each ear)
+    const leftVector = { x: leftEarBase.x - noseTip.x, y: leftEarBase.y - noseTip.y };
+    const rightVector = { x: rightEarBase.x - noseTip.x, y: rightEarBase.y - noseTip.y };
+    
+    // Normalize vectors and apply depth offset
+    const leftLength = Math.sqrt(leftVector.x ** 2 + leftVector.y ** 2);
+    const rightLength = Math.sqrt(rightVector.x ** 2 + rightVector.y ** 2);
+    
+    const depthAdjust = earringDepthOffsetRef.current * 0.5; // Scale factor for depth
+    
+    const leftDepthOffset = {
+      x: (leftVector.x / leftLength) * leftLength * depthAdjust,
+      y: (leftVector.y / leftLength) * leftLength * depthAdjust
+    };
+    const rightDepthOffset = {
+      x: (rightVector.x / rightLength) * rightLength * depthAdjust,
+      y: (rightVector.y / rightLength) * rightLength * depthAdjust
+    };
+    
     // Apply horizontal offset (positive = further apart, negative = closer together)
     const horizontalAdjust = earringHorizontalOffsetRef.current * w * 0.1;
     
     // Apply vertical offset (positive = down, negative = up)
     const verticalAdjust = earringVerticalOffsetRef.current * h * 0.1;
     
-    // Apply offsets to ear positions
+    // Apply all offsets to ear positions
     const leftEar = {
-      x: leftEarBase.x - horizontalAdjust, // Move left ear more to the left
-      y: leftEarBase.y + verticalAdjust
+      x: leftEarBase.x - horizontalAdjust + leftDepthOffset.x, // Horizontal + depth
+      y: leftEarBase.y + verticalAdjust + leftDepthOffset.y    // Vertical + depth
     };
     const rightEar = {
-      x: rightEarBase.x + horizontalAdjust, // Move right ear more to the right
-      y: rightEarBase.y + verticalAdjust
+      x: rightEarBase.x + horizontalAdjust + rightDepthOffset.x, // Horizontal + depth
+      y: rightEarBase.y + verticalAdjust + rightDepthOffset.y    // Vertical + depth
     };
 
     // Calculate size based on face size
