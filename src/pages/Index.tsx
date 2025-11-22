@@ -7,23 +7,25 @@ import { toast } from 'sonner';
 
 interface Chain {
   name: string;
-  data: string; // direct Google Drive image URL
+  data: string;
 }
 
 // =========================
-// LOCAL CHAIN IMAGES
+// AUTO-LOAD CHAIN IMAGES
 // =========================
-const LOCAL_CHAINS: Chain[] = [
-  {
-    name: 'Chain 1',
-    data: '/chains/chain-1.png'
-  },
-  {
-    name: 'Chain 2',
-    data: '/chains/chain-2.png'
-  },
-  // Add all remaining 38 images here (chain-3.png, chain-4.png, etc.)
-];
+// Automatically import all images from public/chains folder
+const chainImages = import.meta.glob('/public/chains/*.(png|jpg|jpeg|webp)', { eager: true, as: 'url' });
+
+// Generate chain list from imported images
+const AUTO_CHAINS: Chain[] = Object.keys(chainImages)
+  .sort() // Sort alphabetically
+  .map((path, index) => {
+    const filename = path.split('/').pop()?.replace(/\.(png|jpg|jpeg|webp)$/i, '') || `Chain ${index + 1}`;
+    return {
+      name: filename.charAt(0).toUpperCase() + filename.slice(1), // Capitalize first letter
+      data: path.replace('/public', '') // Convert to public URL path
+    };
+  });
 
 const Index = () => {
   const [chains, setChains] = useState<Chain[]>([]);
@@ -34,11 +36,11 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isCameraReady, setIsCameraReady] = useState(false);
 
-  // Load chains from local folder
+  // Load chains automatically from folder
   useEffect(() => {
-    setChains(LOCAL_CHAINS);
+    setChains(AUTO_CHAINS);
     setIsLoading(false);
-    toast.success(`Loaded ${LOCAL_CHAINS.length} chains`);
+    toast.success(`Loaded ${AUTO_CHAINS.length} chains from folder`);
   }, []);
 
   const selectChain = useCallback((index: number) => {
