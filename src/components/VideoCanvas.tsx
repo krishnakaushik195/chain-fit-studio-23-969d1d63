@@ -20,7 +20,6 @@ export const VideoCanvas = ({
 }: VideoCanvasProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [isStarted, setIsStarted] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const faceMeshRef = useRef<any>(null);
   const chainImageRef = useRef<HTMLImageElement>(new Image());
@@ -127,7 +126,6 @@ export const VideoCanvas = ({
         });
 
         await camera.start();
-        setIsStarted(true);
         onCameraReady();
       }
     } catch (err) {
@@ -155,6 +153,11 @@ export const VideoCanvas = ({
       drawChain(landmarks, canvas.width, canvas.height, ctx);
     }
   };
+
+  // Auto-start camera on mount
+  useEffect(() => {
+    startCamera();
+  }, []);
 
   const drawChain = (
     landmarks: any[],
@@ -209,15 +212,6 @@ export const VideoCanvas = ({
 
   return (
     <div className="relative flex-1 flex items-center justify-center bg-black overflow-hidden">
-      {!isStarted && (
-        <button
-          onClick={startCamera}
-          className="absolute z-10 px-10 py-5 text-lg font-bold rounded-xl bg-black/20 backdrop-blur-md border-2 border-gold text-white shadow-lg shadow-gold/50 hover:shadow-gold/70 hover:bg-gold/10 transition-all hover:scale-105 active:scale-95"
-        >
-          🎥 Start Camera
-        </button>
-      )}
-
       {error && (
         <div className="absolute z-10 top-4 left-4 right-4 bg-destructive/90 backdrop-blur text-destructive-foreground p-4 rounded-lg">
           {error}
