@@ -11,18 +11,18 @@ interface Chain {
 }
 
 // =========================
-// GOOGLE DRIVE CHAIN IMAGES
+// LOCAL CHAIN IMAGES
 // =========================
-const GOOGLE_DRIVE_CHAINS: Chain[] = [
+const LOCAL_CHAINS: Chain[] = [
   {
     name: 'Chain 1',
-    data: 'https://drive.usercontent.google.com/download?id=1RKvoPREyYrmgasOp_8gzxDxpuJYPNlcV&export=view'
+    data: '/chains/chain-1.png'
   },
   {
     name: 'Chain 2',
-    data: 'https://drive.usercontent.google.com/download?id=11k0Rxu8gWa1dFbPd1oJEhKS2zR2uo3yz&export=view'
+    data: '/chains/chain-2.png'
   },
-  // Add all remaining 38 images here...
+  // Add all remaining 38 images here (chain-3.png, chain-4.png, etc.)
 ];
 
 const Index = () => {
@@ -34,11 +34,11 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isCameraReady, setIsCameraReady] = useState(false);
 
-  // Load chains from Google Drive
+  // Load chains from local folder
   useEffect(() => {
-    setChains(GOOGLE_DRIVE_CHAINS);
+    setChains(LOCAL_CHAINS);
     setIsLoading(false);
-    toast.success(`Loaded ${GOOGLE_DRIVE_CHAINS.length} chains`);
+    toast.success(`Loaded ${LOCAL_CHAINS.length} chains`);
   }, []);
 
   const selectChain = useCallback((index: number) => {
