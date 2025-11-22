@@ -58,6 +58,7 @@ const Index = () => {
   const [earringScale, setEarringScale] = useState(1.0);
   const [earringHorizontalOffset, setEarringHorizontalOffset] = useState(0);
   const [earringVerticalOffset, setEarringVerticalOffset] = useState(0);
+  const [earringDepthOffset, setEarringDepthOffset] = useState(0);
   const [showEarrings, setShowEarrings] = useState(false);
 
   const [isLoading, setIsLoading] = useState(true);
@@ -180,6 +181,8 @@ const Index = () => {
         onEarringHorizontalOffsetChange={setEarringHorizontalOffset}
         earringVerticalOffset={earringVerticalOffset}
         onEarringVerticalOffsetChange={setEarringVerticalOffset}
+        earringDepthOffset={earringDepthOffset}
+        onEarringDepthOffsetChange={setEarringDepthOffset}
         onPreviousEarring={previousEarring}
         onNextEarring={nextEarring}
         showEarrings={showEarrings}
@@ -194,6 +197,7 @@ const Index = () => {
         earringScale={earringScale}
         earringHorizontalOffset={earringHorizontalOffset}
         earringVerticalOffset={earringVerticalOffset}
+        earringDepthOffset={earringDepthOffset}
         showEarrings={showEarrings}
         onCameraReady={() => setIsCameraReady(true)}
       />

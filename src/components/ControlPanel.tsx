@@ -32,6 +32,8 @@ interface ControlPanelProps {
   onEarringHorizontalOffsetChange: (value: number) => void;
   earringVerticalOffset: number;
   onEarringVerticalOffsetChange: (value: number) => void;
+  earringDepthOffset: number;
+  onEarringDepthOffsetChange: (value: number) => void;
   onPreviousEarring: () => void;
   onNextEarring: () => void;
   showEarrings: boolean;
@@ -58,6 +60,8 @@ export const ControlPanel = ({
   onEarringHorizontalOffsetChange,
   earringVerticalOffset,
   onEarringVerticalOffsetChange,
+  earringDepthOffset,
+  onEarringDepthOffsetChange,
   onPreviousEarring,
   onNextEarring,
   showEarrings,
@@ -258,6 +262,27 @@ export const ControlPanel = ({
                   step="0.05"
                   value={earringVerticalOffset}
                   onChange={(e) => onEarringVerticalOffsetChange(parseFloat(e.target.value))}
+                  className="w-full h-2 bg-white/10 rounded-full appearance-none cursor-pointer touch-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-black [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-black"
+                />
+              </div>
+
+              {/* Depth Position (Back/Forward) */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-xs md:text-sm">
+                  <span className="text-gold font-semibold drop-shadow-[0_0_10px_rgba(212,175,55,1)]">
+                    {earringDepthOffset.toFixed(2)}
+                  </span>
+                  <span className="text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.9)]">
+                    Depth Position
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min="-1"
+                  max="1"
+                  step="0.05"
+                  value={earringDepthOffset}
+                  onChange={(e) => onEarringDepthOffsetChange(parseFloat(e.target.value))}
                   className="w-full h-2 bg-white/10 rounded-full appearance-none cursor-pointer touch-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-black [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-black"
                 />
               </div>
