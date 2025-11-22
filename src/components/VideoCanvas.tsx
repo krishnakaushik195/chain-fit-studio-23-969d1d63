@@ -338,54 +338,19 @@ export const VideoCanvas = ({
     const leftVector = { x: leftEarBase.x - noseTip.x, y: leftEarBase.y - noseTip.y };
     const rightVector = { x: rightEarBase.x - noseTip.x, y: rightEarBase.y - noseTip.y };
     
-    // Calculate distances from nose to each ear
+    // Normalize vectors and apply depth offset
     const leftLength = Math.sqrt(leftVector.x ** 2 + leftVector.y ** 2);
     const rightLength = Math.sqrt(rightVector.x ** 2 + rightVector.y ** 2);
     
-    // Detect face angle based on ear distance ratio
-    // When face turns left: leftLength < rightLength (left ear closer/more visible)
-    // When face turns right: rightLength < leftLength (right ear closer/more visible)
-    const distanceRatio = leftLength / rightLength;
-    
-    // Calculate automatic angle-based depth adjustment
-    // Visible ear (closer) = move backward, Hidden ear = fade out
-    let autoLeftDepth = 0;
-    let autoRightDepth = 0;
-    let leftOpacity = 1;
-    let rightOpacity = 1;
-    
-    const angleThreshold = 0.85; // More sensitive angle detection
-    
-    if (distanceRatio < 0.95) {
-      // Face turning left - left ear is more visible
-      const angleFactor = Math.max(0, (0.95 - distanceRatio) / (0.95 - angleThreshold));
-      autoLeftDepth = -angleFactor * 0.4; // Move visible left ear backward
-      autoRightDepth = angleFactor * 0.2; // Move hidden right ear slightly forward
-      
-      // Fade out the far (right) ear
-      rightOpacity = Math.max(0, 1 - angleFactor * 2);
-    } else if (distanceRatio > 1.05) {
-      // Face turning right - right ear is more visible
-      const maxRatio = 1 / angleThreshold;
-      const clampedRatio = Math.min(distanceRatio, maxRatio);
-      const angleFactor = Math.max(0, (clampedRatio - 1.05) / (maxRatio - 1.05));
-      autoRightDepth = -angleFactor * 0.4; // Move visible right ear backward
-      autoLeftDepth = angleFactor * 0.2; // Move hidden left ear slightly forward
-      
-      // Fade out the far (left) ear
-      leftOpacity = Math.max(0, 1 - angleFactor * 2);
-    }
-    
-    // Combine automatic angle adjustment with manual depth control
-    const manualDepthAdjust = earringDepthOffsetRef.current * 0.5;
+    const depthAdjust = earringDepthOffsetRef.current * 0.5; // Scale factor for depth
     
     const leftDepthOffset = {
-      x: (leftVector.x / leftLength) * leftLength * (manualDepthAdjust + autoLeftDepth),
-      y: (leftVector.y / leftLength) * leftLength * (manualDepthAdjust + autoLeftDepth)
+      x: (leftVector.x / leftLength) * leftLength * depthAdjust,
+      y: (leftVector.y / leftLength) * leftLength * depthAdjust
     };
     const rightDepthOffset = {
-      x: (rightVector.x / rightLength) * rightLength * (manualDepthAdjust + autoRightDepth),
-      y: (rightVector.y / rightLength) * rightLength * (manualDepthAdjust + autoRightDepth)
+      x: (rightVector.x / rightLength) * rightLength * depthAdjust,
+      y: (rightVector.y / rightLength) * rightLength * depthAdjust
     };
     
     // Apply horizontal offset (positive = further apart, negative = closer together)
@@ -422,24 +387,18 @@ export const VideoCanvas = ({
       const earringW = baseEarringSize * earringScaleRef.current;
       const earringH = (earringImageRef.current.height * earringW) / earringImageRef.current.width;
 
-      // Draw left earring with opacity
-      if (leftOpacity > 0.01) {
-        ctx.save();
-        ctx.globalAlpha = leftOpacity;
-        ctx.translate(leftEar.x, leftEar.y);
-        ctx.drawImage(earringImageRef.current, -earringW / 2, 0, earringW, earringH);
-        ctx.restore();
-      }
+      // Draw left earring
+      ctx.save();
+      ctx.translate(leftEar.x, leftEar.y);
+      ctx.drawImage(earringImageRef.current, -earringW / 2, 0, earringW, earringH);
+      ctx.restore();
 
-      // Draw right earring (mirrored) with opacity
-      if (rightOpacity > 0.01) {
-        ctx.save();
-        ctx.globalAlpha = rightOpacity;
-        ctx.translate(rightEar.x, rightEar.y);
-        ctx.scale(-1, 1);
-        ctx.drawImage(earringImageRef.current, -earringW / 2, 0, earringW, earringH);
-        ctx.restore();
-      }
+      // Draw right earring (mirrored)
+      ctx.save();
+      ctx.translate(rightEar.x, rightEar.y);
+      ctx.scale(-1, 1);
+      ctx.drawImage(earringImageRef.current, -earringW / 2, 0, earringW, earringH);
+      ctx.restore();
     } else {
       // Draw gold dots as fallback
       const dotRadius = (faceWidth * 0.02) * earringScaleRef.current;
@@ -449,25 +408,15 @@ export const VideoCanvas = ({
       ctx.shadowColor = '#D4AF37';
       ctx.shadowBlur = 15;
       
-      // Draw left dot with opacity
-      if (leftOpacity > 0.01) {
-        ctx.save();
-        ctx.globalAlpha = leftOpacity;
-        ctx.beginPath();
-        ctx.arc(leftEar.x, leftEar.y, dotRadius, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
-      }
+      // Draw left dot
+      ctx.beginPath();
+      ctx.arc(leftEar.x, leftEar.y, dotRadius, 0, Math.PI * 2);
+      ctx.fill();
       
-      // Draw right dot with opacity
-      if (rightOpacity > 0.01) {
-        ctx.save();
-        ctx.globalAlpha = rightOpacity;
-        ctx.beginPath();
-        ctx.arc(rightEar.x, rightEar.y, dotRadius, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
-      }
+      // Draw right dot
+      ctx.beginPath();
+      ctx.arc(rightEar.x, rightEar.y, dotRadius, 0, Math.PI * 2);
+      ctx.fill();
       
       // Reset shadow
       ctx.shadowBlur = 0;
