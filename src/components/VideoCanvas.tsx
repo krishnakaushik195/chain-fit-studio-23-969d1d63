@@ -366,7 +366,9 @@ export const VideoCanvas = ({
       rightOpacity = Math.max(0, 1 - angleFactor * 2);
     } else if (distanceRatio > 1.05) {
       // Face turning right - right ear is more visible
-      const angleFactor = Math.max(0, (distanceRatio - 1.05) / (1.05 - (1/angleThreshold)));
+      const maxRatio = 1 / angleThreshold;
+      const clampedRatio = Math.min(distanceRatio, maxRatio);
+      const angleFactor = Math.max(0, (clampedRatio - 1.05) / (maxRatio - 1.05));
       autoRightDepth = -angleFactor * 0.4; // Move visible right ear backward
       autoLeftDepth = angleFactor * 0.2; // Move hidden left ear slightly forward
       
