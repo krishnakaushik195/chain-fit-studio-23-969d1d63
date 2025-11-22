@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChevronDown, Camera } from 'lucide-react';
+import { ChevronDown, Camera, ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface Chain {
@@ -162,18 +162,20 @@ export const ControlPanel = ({
             ))}
           </div>
 
-          <div className="grid grid-cols-2 gap-2">
+          <div className="flex items-center justify-center gap-8 mt-4">
             <button
               onClick={onPrevious}
-              className="px-4 py-3 bg-transparent hover:bg-gold/20 border-2 border-gold/60 hover:border-gold rounded-lg text-sm font-medium transition-all text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.9)]"
+              className="w-16 h-16 bg-gold/20 hover:bg-gold/30 border-2 border-gold rounded-full flex items-center justify-center transition-all active:scale-90"
+              aria-label="Previous chain"
             >
-              2 Previous
+              <ChevronLeft className="w-8 h-8 text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.9)]" />
             </button>
             <button
               onClick={onNext}
-              className="px-4 py-3 bg-transparent hover:bg-gold/20 border-2 border-gold/60 hover:border-gold rounded-lg text-sm font-medium transition-all text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.9)]"
+              className="w-16 h-16 bg-gold/20 hover:bg-gold/30 border-2 border-gold rounded-full flex items-center justify-center transition-all active:scale-90"
+              aria-label="Next chain"
             >
-              Next 8
+              <ChevronRight className="w-8 h-8 text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.9)]" />
             </button>
           </div>
         </div>
