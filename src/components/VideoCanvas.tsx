@@ -338,19 +338,40 @@ export const VideoCanvas = ({
     const leftVector = { x: leftEarBase.x - noseTip.x, y: leftEarBase.y - noseTip.y };
     const rightVector = { x: rightEarBase.x - noseTip.x, y: rightEarBase.y - noseTip.y };
     
-    // Normalize vectors and apply depth offset
+    // Calculate distances from nose to each ear
     const leftLength = Math.sqrt(leftVector.x ** 2 + leftVector.y ** 2);
     const rightLength = Math.sqrt(rightVector.x ** 2 + rightVector.y ** 2);
     
-    const depthAdjust = earringDepthOffsetRef.current * 0.5; // Scale factor for depth
+    // Detect face angle based on ear distance ratio
+    // When face turns left: leftLength < rightLength (left ear closer)
+    // When face turns right: rightLength < leftLength (right ear closer)
+    const distanceRatio = leftLength / rightLength;
+    
+    // Calculate automatic angle-based depth adjustment
+    // Closer ear (more visible) = move forward, Further ear = move backward
+    let autoLeftDepth = 0;
+    let autoRightDepth = 0;
+    
+    if (distanceRatio < 0.95) {
+      // Face turning left - left ear is closer/more visible
+      autoLeftDepth = (1 - distanceRatio) * 0.3; // Move left forward
+      autoRightDepth = -(1 - distanceRatio) * 0.3; // Move right backward
+    } else if (distanceRatio > 1.05) {
+      // Face turning right - right ear is closer/more visible
+      autoRightDepth = (distanceRatio - 1) * 0.3; // Move right forward
+      autoLeftDepth = -(distanceRatio - 1) * 0.3; // Move left backward
+    }
+    
+    // Combine automatic angle adjustment with manual depth control
+    const manualDepthAdjust = earringDepthOffsetRef.current * 0.5;
     
     const leftDepthOffset = {
-      x: (leftVector.x / leftLength) * leftLength * depthAdjust,
-      y: (leftVector.y / leftLength) * leftLength * depthAdjust
+      x: (leftVector.x / leftLength) * leftLength * (manualDepthAdjust + autoLeftDepth),
+      y: (leftVector.y / leftLength) * leftLength * (manualDepthAdjust + autoLeftDepth)
     };
     const rightDepthOffset = {
-      x: (rightVector.x / rightLength) * rightLength * depthAdjust,
-      y: (rightVector.y / rightLength) * rightLength * depthAdjust
+      x: (rightVector.x / rightLength) * rightLength * (manualDepthAdjust + autoRightDepth),
+      y: (rightVector.y / rightLength) * rightLength * (manualDepthAdjust + autoRightDepth)
     };
     
     // Apply horizontal offset (positive = further apart, negative = closer together)
