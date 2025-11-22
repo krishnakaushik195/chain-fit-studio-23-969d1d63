@@ -4,12 +4,19 @@ import { ControlPanel } from '@/components/ControlPanel';
 import { StatusBar } from '@/components/StatusBar';
 import { QuickActions } from '@/components/QuickActions';
 import { toast } from 'sonner';
-import { API_ENDPOINTS } from '@/config/api';
 
 interface Chain {
   name: string;
   data: string;
 }
+
+// Google Drive direct links for chain images
+const GOOGLE_DRIVE_CHAINS = [
+  { name: 'Chain 1', data: 'https://drive.google.com/uc?export=view&id=1RKvoPREyYrmgasOp_8gzxDxpuJYPNlcV' },
+  { name: 'Chain 2', data: 'https://drive.google.com/uc?export=view&id=11k0Rxu8gWa1dFbPd1oJEhKS2zR2uo3yz' },
+  // Add more chains here with format:
+  // { name: 'Chain X', data: 'https://drive.google.com/uc?export=view&id=YOUR_FILE_ID' },
+];
 
 const Index = () => {
   const [chains, setChains] = useState<Chain[]>([]);
@@ -19,35 +26,11 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isCameraReady, setIsCameraReady] = useState(false);
 
-  // Fetch chains from Flask backend
+  // Load chains from Google Drive
   useEffect(() => {
-    const fetchChains = async () => {
-      try {
-        const response = await fetch(API_ENDPOINTS.chains);
-        const data = await response.json();
-        
-        if (data && data.length > 0) {
-          setChains(data);
-          toast.success(`Loaded ${data.length} chains`);
-        } else {
-          toast.error('No chains found');
-        }
-      } catch (error) {
-        console.error('Error loading chains:', error);
-        toast.error('Failed to load chains. Make sure Flask backend is running.');
-        
-        // Fallback mock data for development
-        setChains([
-          { name: 'Gold Chain', data: '/placeholder.svg' },
-          { name: 'Silver Chain', data: '/placeholder.svg' },
-          { name: 'Diamond Chain', data: '/placeholder.svg' },
-        ]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchChains();
+    setChains(GOOGLE_DRIVE_CHAINS);
+    setIsLoading(false);
+    toast.success(`Loaded ${GOOGLE_DRIVE_CHAINS.length} chains from Google Drive`);
   }, []);
 
   const selectChain = useCallback((index: number) => {
