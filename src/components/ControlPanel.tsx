@@ -28,6 +28,10 @@ interface ControlPanelProps {
   onSelectEarring: (index: number) => void;
   earringScale: number;
   onEarringScaleChange: (value: number) => void;
+  earringHorizontalOffset: number;
+  onEarringHorizontalOffsetChange: (value: number) => void;
+  earringVerticalOffset: number;
+  onEarringVerticalOffsetChange: (value: number) => void;
   onPreviousEarring: () => void;
   onNextEarring: () => void;
   showEarrings: boolean;
@@ -50,6 +54,10 @@ export const ControlPanel = ({
   onSelectEarring,
   earringScale,
   onEarringScaleChange,
+  earringHorizontalOffset,
+  onEarringHorizontalOffsetChange,
+  earringVerticalOffset,
+  onEarringVerticalOffsetChange,
   onPreviousEarring,
   onNextEarring,
   showEarrings,
@@ -208,6 +216,48 @@ export const ControlPanel = ({
                   step="0.05"
                   value={earringScale}
                   onChange={(e) => onEarringScaleChange(parseFloat(e.target.value))}
+                  className="w-full h-2 bg-white/10 rounded-full appearance-none cursor-pointer touch-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-black [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-black"
+                />
+              </div>
+
+              {/* Horizontal Position (Closer/Further) */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-xs md:text-sm">
+                  <span className="text-gold font-semibold drop-shadow-[0_0_10px_rgba(212,175,55,1)]">
+                    {earringHorizontalOffset.toFixed(2)}
+                  </span>
+                  <span className="text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.9)]">
+                    Horizontal Position
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min="-1"
+                  max="1"
+                  step="0.05"
+                  value={earringHorizontalOffset}
+                  onChange={(e) => onEarringHorizontalOffsetChange(parseFloat(e.target.value))}
+                  className="w-full h-2 bg-white/10 rounded-full appearance-none cursor-pointer touch-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-black [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-black"
+                />
+              </div>
+
+              {/* Vertical Position (Up/Down) */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-xs md:text-sm">
+                  <span className="text-gold font-semibold drop-shadow-[0_0_10px_rgba(212,175,55,1)]">
+                    {earringVerticalOffset.toFixed(2)}
+                  </span>
+                  <span className="text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.9)]">
+                    Vertical Position
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min="-1"
+                  max="1"
+                  step="0.05"
+                  value={earringVerticalOffset}
+                  onChange={(e) => onEarringVerticalOffsetChange(parseFloat(e.target.value))}
                   className="w-full h-2 bg-white/10 rounded-full appearance-none cursor-pointer touch-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-black [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-black"
                 />
               </div>

@@ -16,6 +16,8 @@ interface VideoCanvasProps {
   verticalOffset: number;
   currentEarring: Earring | null;
   earringScale: number;
+  earringHorizontalOffset: number;
+  earringVerticalOffset: number;
   showEarrings: boolean;
   onCameraReady: () => void;
 }
@@ -26,6 +28,8 @@ export const VideoCanvas = ({
   verticalOffset,
   currentEarring,
   earringScale,
+  earringHorizontalOffset,
+  earringVerticalOffset,
   showEarrings,
   onCameraReady,
 }: VideoCanvasProps) => {
@@ -39,6 +43,8 @@ export const VideoCanvas = ({
   const chainScaleRef = useRef(chainScale);
   const verticalOffsetRef = useRef(verticalOffset);
   const earringScaleRef = useRef(earringScale);
+  const earringHorizontalOffsetRef = useRef(earringHorizontalOffset);
+  const earringVerticalOffsetRef = useRef(earringVerticalOffset);
   const showEarringsRef = useRef(showEarrings);
 
   useEffect(() => {
@@ -75,6 +81,14 @@ export const VideoCanvas = ({
   useEffect(() => {
     earringScaleRef.current = earringScale;
   }, [earringScale]);
+
+  useEffect(() => {
+    earringHorizontalOffsetRef.current = earringHorizontalOffset;
+  }, [earringHorizontalOffset]);
+
+  useEffect(() => {
+    earringVerticalOffsetRef.current = earringVerticalOffset;
+  }, [earringVerticalOffset]);
 
   useEffect(() => {
     showEarringsRef.current = showEarrings;
@@ -302,11 +316,28 @@ export const VideoCanvas = ({
     ctx: CanvasRenderingContext2D
   ) => {
     // MediaPipe Face Mesh ear landmarks
-    const LEFT_EAR = 234;  // Left ear tragion (upper ear attachment)
-    const RIGHT_EAR = 454; // Right ear tragion (upper ear attachment)
+    const LEFT_EAR = 234;  // Left ear tragion landmark index
+    const RIGHT_EAR = 454; // Right ear tragion landmark index
     
-    const leftEar = { x: landmarks[LEFT_EAR].x * w, y: landmarks[LEFT_EAR].y * h };
-    const rightEar = { x: landmarks[RIGHT_EAR].x * w, y: landmarks[RIGHT_EAR].y * h };
+    // Get base ear positions
+    const leftEarBase = { x: landmarks[LEFT_EAR].x * w, y: landmarks[LEFT_EAR].y * h };
+    const rightEarBase = { x: landmarks[RIGHT_EAR].x * w, y: landmarks[RIGHT_EAR].y * h };
+    
+    // Apply horizontal offset (positive = further apart, negative = closer together)
+    const horizontalAdjust = earringHorizontalOffsetRef.current * w * 0.1;
+    
+    // Apply vertical offset (positive = down, negative = up)
+    const verticalAdjust = earringVerticalOffsetRef.current * h * 0.1;
+    
+    // Apply offsets to ear positions
+    const leftEar = {
+      x: leftEarBase.x - horizontalAdjust, // Move left ear more to the left
+      y: leftEarBase.y + verticalAdjust
+    };
+    const rightEar = {
+      x: rightEarBase.x + horizontalAdjust, // Move right ear more to the right
+      y: rightEarBase.y + verticalAdjust
+    };
 
     // Calculate size based on face size
     const JAW_LEFT = 234;
