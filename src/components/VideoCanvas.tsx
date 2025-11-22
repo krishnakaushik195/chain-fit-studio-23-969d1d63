@@ -227,8 +227,8 @@ export const VideoCanvas = ({
         drawChain(landmarks, canvas.width, canvas.height, ctx);
       }
 
-      // Draw earrings if enabled and image is loaded
-      if (showEarringsRef.current && earringImageRef.current && earringImageRef.current.complete && earringImageRef.current.naturalWidth > 0) {
+      // Draw earrings if enabled (either image or gold dots as fallback)
+      if (showEarringsRef.current) {
         drawEarrings(landmarks, canvas.width, canvas.height, ctx);
       }
     }
@@ -302,37 +302,64 @@ export const VideoCanvas = ({
     ctx: CanvasRenderingContext2D
   ) => {
     // MediaPipe Face Mesh ear landmarks
-    // These are approximate ear positions for earring placement
     const LEFT_EAR = 234;  // Left ear tragion (upper ear attachment)
     const RIGHT_EAR = 454; // Right ear tragion (upper ear attachment)
     
     const leftEar = { x: landmarks[LEFT_EAR].x * w, y: landmarks[LEFT_EAR].y * h };
     const rightEar = { x: landmarks[RIGHT_EAR].x * w, y: landmarks[RIGHT_EAR].y * h };
 
-    // Calculate earring size based on face size
+    // Calculate size based on face size
     const JAW_LEFT = 234;
     const JAW_RIGHT = 454;
     const jawL = { x: landmarks[JAW_LEFT].x * w, y: landmarks[JAW_LEFT].y * h };
     const jawR = { x: landmarks[JAW_RIGHT].x * w, y: landmarks[JAW_RIGHT].y * h };
     const faceWidth = Math.sqrt((jawR.x - jawL.x) ** 2 + (jawR.y - jawL.y) ** 2);
     
-    // Earring size is proportional to face width
-    const baseEarringSize = faceWidth * 0.15;
-    const earringW = baseEarringSize * earringScaleRef.current;
-    const earringH = (earringImageRef.current.height * earringW) / earringImageRef.current.width;
+    // Check if earring image is loaded
+    const hasEarringImage = earringImageRef.current && 
+                            earringImageRef.current.complete && 
+                            earringImageRef.current.naturalWidth > 0;
 
-    // Draw left earring
-    ctx.save();
-    ctx.translate(leftEar.x, leftEar.y);
-    ctx.drawImage(earringImageRef.current, -earringW / 2, 0, earringW, earringH);
-    ctx.restore();
+    if (hasEarringImage) {
+      // Draw earring images
+      const baseEarringSize = faceWidth * 0.15;
+      const earringW = baseEarringSize * earringScaleRef.current;
+      const earringH = (earringImageRef.current.height * earringW) / earringImageRef.current.width;
 
-    // Draw right earring (mirrored)
-    ctx.save();
-    ctx.translate(rightEar.x, rightEar.y);
-    ctx.scale(-1, 1); // Mirror for right side
-    ctx.drawImage(earringImageRef.current, -earringW / 2, 0, earringW, earringH);
-    ctx.restore();
+      // Draw left earring
+      ctx.save();
+      ctx.translate(leftEar.x, leftEar.y);
+      ctx.drawImage(earringImageRef.current, -earringW / 2, 0, earringW, earringH);
+      ctx.restore();
+
+      // Draw right earring (mirrored)
+      ctx.save();
+      ctx.translate(rightEar.x, rightEar.y);
+      ctx.scale(-1, 1);
+      ctx.drawImage(earringImageRef.current, -earringW / 2, 0, earringW, earringH);
+      ctx.restore();
+    } else {
+      // Draw gold dots as fallback
+      const dotRadius = (faceWidth * 0.02) * earringScaleRef.current;
+      
+      // Gold color
+      ctx.fillStyle = '#D4AF37';
+      ctx.shadowColor = '#D4AF37';
+      ctx.shadowBlur = 15;
+      
+      // Draw left dot
+      ctx.beginPath();
+      ctx.arc(leftEar.x, leftEar.y, dotRadius, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Draw right dot
+      ctx.beginPath();
+      ctx.arc(rightEar.x, rightEar.y, dotRadius, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Reset shadow
+      ctx.shadowBlur = 0;
+    }
   };
 
   return (
